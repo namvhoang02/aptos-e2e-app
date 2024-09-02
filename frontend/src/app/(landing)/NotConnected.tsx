@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 
-// import { useTypingEffect } from "@/lib/useTypingEffect";
 import { NesButton } from "@/components/ui/nes-button";
 // import { Pet } from "./Pet";
 // import { PetImage, bodies, ears, faces } from "./Pet/Image";
