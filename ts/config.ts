@@ -1,0 +1,3 @@
+export const PRIVATE_KEY = "0x690f7ade6a845a39f55cc54c2771d4aac4e35db77007ee1b13b92324a0c03b20";
+
+export const MODULE_ADDRESS = "0x7654fd0be5bfa9e6eb080229eab8cbb746022fe3ba5cb302fef2d8985d666966";
