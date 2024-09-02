@@ -46,6 +46,20 @@ In this section, we will create a `my-first-dapp` directory to hold our project 
 
 Now let’s [create a smart contract](./chapters/1_create_a_smart_contract.md).
 
+## Installation
+
+**Setup mutagen**
+
+```sh
+$ mutagen sync create -n=aptos-e2e-dapp -c=./mutagen.yml ./ ubuntu@ec2-47-129-18-54.ap-southeast-1.compute.amazonaws.com:~/workspace/aptos-e2e-dapp
+```
+
+**Connect to ec2**
+
+```sh
+$ ssh -i ~/.ssh/id_rsa -p 22 ubuntu@ec2-47-129-18-54.ap-southeast-1.compute.amazonaws.com
+```
+
 ## References
 
 - https://aptos.dev/en/build/guides/build-e2e-dapp
