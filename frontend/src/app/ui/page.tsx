@@ -1,5 +1,5 @@
 import { ChevronRight } from "lucide-react";
-import { ShuffleButton } from "@/components/ShuffleButton";
+
 import { NesButton } from "@/components/ui/nes-button"
 
 export default function Page() {

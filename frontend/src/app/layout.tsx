@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { type PropsWithChildren } from "react";
-import { Providers } from './providers'
 
 import "nes.css/css/nes.min.css";
 import "./globals.css";
+
+import { Providers } from './providers'
 
 const kongtext = localFont({
   src: "./../../public/kongtext.ttf",
