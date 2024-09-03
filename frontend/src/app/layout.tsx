@@ -1,9 +1,10 @@
 import { type Metadata } from "next";
 import { type PropsWithChildren } from "react";
-import { cn } from "@/lib/utils"
-import { fontSans } from "@/lib/fonts"
 
 import "./globals.css";
+
+import { fontSans } from "@/lib/fonts"
+import { cn } from "@/lib/utils"
 
 import { Providers } from './providers'
 
