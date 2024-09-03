@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 
-import { NesButton } from "@/components/ui/nes-button";
+import { Button } from "@/components/ui/button"
 // import { Pet } from "./Pet";
 // import { PetImage, bodies, ears, faces } from "./Pet/Image";
 // import { ShuffleButton } from "@/components/ShuffleButton";
@@ -107,7 +107,7 @@ function FormSignIn() {
       <SolOptions handleSolClick={handleSolClick} sol={data.sol} className="sm:mt-6 my-2" />
       {/* <Warnings /> */}
       {/* <ActionLinks /> */}
-      <NesButton type="button" colors="warning" className="sm:mt-6 my-2">Double or nothing</NesButton>
+      <Button className="sm:mt-6 my-2">Double or nothing</Button>
     </div>
   );
 }
@@ -148,9 +148,9 @@ function SolOptions({ handleSolClick, sol, className, ...props }: { handleSolCli
     <div className={className} {...props}>
       <h3 className="mb-2">FOR</h3>
       <div className="row mb-1 grid grid-cols-3 gap-4">
-        <Button selected={sol === 0.05} onClick={() => handleSolClick(0.05)}>0.05 APT</Button>
-        <Button selected={sol === 0.1} onClick={() => handleSolClick(0.1)}>0.1 APT</Button>
-        <Button selected={sol === 0.25} onClick={() => handleSolClick(0.25)}>0.25 APT</Button>
+        <Button onClick={() => handleSolClick(0.05)}>0.05 APT</Button>
+        <Button onClick={() => handleSolClick(0.1)}>0.1 APT</Button>
+        <Button onClick={() => handleSolClick(0.25)}>0.25 APT</Button>
       </div>
     </div>
   );
@@ -173,21 +173,13 @@ function SolOptions({ handleSolClick, sol, className, ...props }: { handleSolCli
 //   );
 // }
 
-function Button({ children, selected, onClick }: { children: React.ReactNode, selected: boolean, onClick: () => void }) {
-  return (
-    <NesButton type="button" variant={selected ? undefined : "outline"} colors="warning" onClick={onClick}>
-      {children}
-    </NesButton>
-  );
-}
-
 function LikeForSection({ handleTypeClick, type, className, ...props }: { handleTypeClick: (type: "heads" | "tails") => void; type: "heads" | "tails"; className?: string }) {
   return (
     <div className={className} {...props}>
       <h3 className="mb-2">I LIKE</h3>
       <div className="row mb-1 grid grid-cols-2 gap-4">
-        <Button selected={type === "heads"} onClick={() => handleTypeClick("heads")}>Heads</Button>
-        <Button selected={type === "tails"} onClick={() => handleTypeClick("tails")}>Tails</Button>
+        <Button onClick={() => handleTypeClick("heads")}>Heads</Button>
+        <Button onClick={() => handleTypeClick("tails")}>Tails</Button>
       </div>
     </div>
   );
