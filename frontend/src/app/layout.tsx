@@ -1,16 +1,11 @@
-import type { Metadata } from "next";
-import localFont from "next/font/local";
+import { type Metadata } from "next";
 import { type PropsWithChildren } from "react";
+import { cn } from "@/lib/utils"
+import { fontSans } from "@/lib/fonts"
 
-import "nes.css/css/nes.min.css";
 import "./globals.css";
 
 import { Providers } from './providers'
-
-const kongtext = localFont({
-  src: "./../../public/kongtext.ttf",
-  variable: "--font-kongtext",
-});
 
 export const metadata: Metadata = {
   title: "Boilerplate",
@@ -20,7 +15,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang="en">
-      <body className={kongtext.className}>
+      <body className={cn(
+        "min-h-screen bg-background font-sans antialiased",
+        fontSans.variable
+      )}>
         <Providers>{children}</Providers>
       </body>
     </html>
