@@ -114,17 +114,17 @@ On the `todolist.move` file, update the content in the module with:
 ```move filename="todolist.move"
 ...
 struct TodoList has key {
-    tasks: Table<u64, Task>,
-    set_task_event: event::EventHandle<Task>,
-    task_counter: u64
-  }
+  tasks: Table<u64, Task>,
+  set_task_event: event::EventHandle<Task>,
+  task_counter: u64
+}
 
 struct Task has store, drop, copy {
-    task_id: u64,
-    address:address,
-    content: String,
-    completed: bool,
-  }
+  task_id: u64,
+  address:address,
+  content: String,
+  completed: bool,
+}
 ...
 ```
 
@@ -180,7 +180,7 @@ INCLUDING DEPENDENCY AptosStdlib
 INCLUDING DEPENDENCY MoveStdlib
 BUILDING myTodolist
 {
-"Result": [
+  "Result": [
     "cbddf398841353776903dbab2fdaefc54f181d07e114ae818b1a67af28d1b018::todolist"
   ]
 }

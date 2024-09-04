@@ -7,32 +7,28 @@ import {
   WalletName,
   WalletReadyState,
 } from "@aptos-labs/wallet-adapter-react";
+import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react"
 
 import { cn } from "@/lib/utils";
-
-const buttonStyles = "nes-btn is-primary";
 
 export const WalletButtons = (): any => {
   const { wallets, connected, disconnect, isLoading } = useWallet();
 
   if (connected) {
     return (
-      <div className="flex flex-row">
-        <div
-          className={cn(buttonStyles, "hover:bg-blue-700 btn-small")}
-          onClick={disconnect}
-        >
-          Disconnect
-        </div>
-      </div>
+      <Button onClick={disconnect}>
+        Disconnect
+      </Button>
     );
   }
 
   if (isLoading || !wallets || !wallets[0]) {
     return (
-      <div className={cn(buttonStyles, "opacity-50 cursor-not-allowed")}>
+      <Button disabled>
+        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
         Loading...
-      </div>
+      </Button>
     );
   }
 
@@ -76,34 +72,31 @@ const WalletView = ({ wallet }: { wallet: Wallet }) => {
     // wallet has mobile app
     if (mobileSupport) {
       return (
-        <button
-          className={cn(buttonStyles, "hover:bg-blue-700")}
+        <Button
           disabled={false}
           key={wallet.name}
           onClick={() => onWalletConnectRequest(wallet.name)}
           style={{ maxWidth: "300px" }}
         >
           Connect Wallet
-        </button>
+        </Button>
       );
     }
     // wallet does not have mobile app
     return (
-      <button
-        className={cn(buttonStyles, "opacity-50 cursor-not-allowed")}
+      <Button
         disabled={true}
         key={wallet.name}
         style={{ maxWidth: "300px" }}
       >
         Connect Wallet - Desktop Only
-      </button>
+      </Button>
     );
   } else {
     // desktop
     return (
-      <button
+      <Button
         className={cn(
-          buttonStyles,
           isWalletReady ? "hover:bg-blue-700" : "opacity-50 cursor-not-allowed"
         )}
         disabled={!isWalletReady}
@@ -112,7 +105,7 @@ const WalletView = ({ wallet }: { wallet: Wallet }) => {
         style={{ maxWidth: "300px" }}
       >
         Connect Wallet
-      </button>
+      </Button>
     );
   }
 };
