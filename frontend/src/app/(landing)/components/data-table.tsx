@@ -1,4 +1,5 @@
 "use client"
+import { useWallet } from "@aptos-labs/wallet-adapter-react";
 
 import {
   ColumnDef,
@@ -15,6 +16,7 @@ import {
   VisibilityState,
 } from "@tanstack/react-table"
 import * as React from "react"
+import { WalletButtons } from "@/components/WalletButtons"
 
 import {
   Table,
@@ -27,6 +29,7 @@ import {
 
 import { DataTablePagination } from "./data-table-pagination"
 import { DataTableToolbar } from "./data-table-toolbar"
+import { Button } from "@/components/ui/button";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -37,6 +40,8 @@ export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+  const { connected } = useWallet();
+
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
@@ -91,7 +96,7 @@ export function DataTable<TData, TValue>({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {connected && (table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
@@ -114,6 +119,18 @@ export function DataTable<TData, TValue>({
                   className="h-24 text-center"
                 >
                   No results.
+                  <Button>Create your list</Button>
+                </TableCell>
+              </TableRow>
+            ))}
+            {!connected && (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  No results.
+                  <WalletButtons />
                 </TableCell>
               </TableRow>
             )}

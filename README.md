@@ -67,3 +67,13 @@ $ ssh -i ~/.ssh/id_rsa -p 22 ubuntu@ec2-47-129-18-54.ap-southeast-1.compute.amaz
 - https://github.com/aptos-labs/developer-docs/blob/81f157e3d00cbb3fd4f0197b6d4ae1f6fb45e606/apps/nextra/pages/en/build/guides/build-e2e-dapp.mdx
 
 - https://github.com/aptos-labs/todolist-dapp-tutorial/blob/main/move/sources/todolist.move
+
+- https://github.com/sushiswap/sushiswap/tree/master/apps/web
+
+- https://github.com/umi-ag/frostend/tree/alpha
+
+- https://github.com/hippospace/hippo-frontend/tree/main
+
+- https://github.com/aptos-labs/aptos-names-contracts (move)
+
+- https://github.com/aptos-labs/move-by-examples/tree/main/friend-tech/aptos/frontend

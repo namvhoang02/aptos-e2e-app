@@ -1,31 +1,32 @@
-import { promises as fs } from "fs"
+// import { promises as fs } from "fs"
 import { Metadata } from "next"
-import path from "path"
-import { z } from "zod"
+// import path from "path"
+// import { z } from "zod"
 
 import { columns } from "./components/columns"
 import { DataTable } from "./components/data-table"
 import { UserNav } from "./components/user-nav"
-import { taskSchema } from "./data/schema"
+// import { taskSchema } from "./data/schema"
+import { WalletButtons } from "@/components/WalletButtons"
 
 export const metadata: Metadata = {
   title: "Tasks",
   description: "A task and issue tracker build using Tanstack Table.",
 }
 
-// Simulate a database read for tasks.
-async function getTasks() {
-  const data = await fs.readFile(
-    path.join(process.cwd(), "src/app/(landing)/data/tasks.json")
-  )
+// // Simulate a database read for tasks.
+// async function getTasks() {
+//   const data = await fs.readFile(
+//     path.join(process.cwd(), "src/app/(landing)/data/tasks.json")
+//   )
 
-  const tasks = JSON.parse(data.toString())
+//   const tasks = JSON.parse(data.toString())
 
-  return z.array(taskSchema).parse(tasks)
-}
+//   return z.array(taskSchema).parse(tasks)
+// }
 
 export default async function TaskPage() {
-  const tasks = await getTasks()
+  // const tasks = await getTasks()
 
   return (
     <>
@@ -39,9 +40,10 @@ export default async function TaskPage() {
           </div>
           <div className="flex items-center space-x-2">
             <UserNav />
+            <WalletButtons />
           </div>
         </div>
-        <DataTable data={tasks} columns={columns} />
+        <DataTable data={[]} columns={columns} />
       </div>
     </>
   )
