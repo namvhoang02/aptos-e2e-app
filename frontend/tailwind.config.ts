@@ -1,4 +1,5 @@
-import type { Config } from "tailwindcss"
+import { fontFamily } from "tailwindcss/defaultTheme";
+import { type Config } from "tailwindcss";
 
 const config = {
   darkMode: ["class"],
@@ -27,7 +28,8 @@ const config = {
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
       fontFamily: {
-        sans: ["var(--font-kongtext)"],
+        sans: ["var(--font-geist-sans)", ...fontFamily.sans],
+        // mono: ["var(--font-mono)", ...fontFamily.mono],
       },
       colors: {
         border: "hsl(var(--border))",
