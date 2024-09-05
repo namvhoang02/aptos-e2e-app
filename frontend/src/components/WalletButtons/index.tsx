@@ -7,10 +7,11 @@ import {
   WalletName,
   WalletReadyState,
 } from "@aptos-labs/wallet-adapter-react";
-import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react"
 
 import { cn } from "@/lib/utils";
+
+import { Button } from "@/components/ui/button";
 
 export const WalletButtons = (): any => {
   const { wallets, connected, disconnect, isLoading } = useWallet();

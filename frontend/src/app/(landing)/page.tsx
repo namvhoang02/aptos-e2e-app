@@ -2,20 +2,21 @@
 
 // import { promises as fs } from "fs"
 // import { type Metadata } from "next";
-import { useEffect } from 'react';
-
+import { Ed25519PublicKey, InputGenerateTransactionPayloadData } from '@aptos-labs/ts-sdk';
 // import path from "path"
 // import { z } from "zod"
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
-import { Ed25519PublicKey, InputViewFunctionData } from '@aptos-labs/ts-sdk';
+
+import { getAptosClient } from "@/lib/aptosClient"
+import { MODULE_ADDRESS } from "@/lib/constants";
+
 import { Button } from "@/components/ui/button";
+// import { taskSchema } from "./data/schema"
+import { WalletButtons } from "@/components/WalletButtons"
+
 import { columns } from "./components/columns"
 import { DataTable } from "./components/data-table"
 import { UserNav } from "./components/user-nav"
-// import { taskSchema } from "./data/schema"
-import { WalletButtons } from "@/components/WalletButtons"
-import { getAptosClient } from "@/lib/aptosClient"
-import { MODULE_ADDRESS } from "@/lib/env";
 
 // export const metadata: Metadata = {
 //   title: "Tasks",
@@ -37,54 +38,10 @@ import { MODULE_ADDRESS } from "@/lib/env";
 // import { getAccount } from "./account";
 // import { type Task } from "./types";
 
-type Task = {
-  address: string;
-  completed: boolean;
-  content: string;
-  task_id: string;
-};
-
-export default function TaskPage() {
+export default function Page() {
   const { account, signAndSubmitTransaction } = useWallet();
-  console.log(account, 'account 1');
 
   const client = getAptosClient();
-
-  const fetchData = async () => {
-    try {
-      if (!account) {
-        return;
-      }
-
-      const todoListResource = await client.getAccountResource({
-        accountAddress: account.address,
-        resourceType: `${MODULE_ADDRESS}::todolist::TodoList`
-      });
-
-
-      // tasks table handle
-      const tableHandle = (todoListResource as any).tasks.handle;
-      // tasks table counter
-      const taskCounter = (todoListResource as any).task_counter;
-
-      const tasks: Task[] = [];
-      let counter = 1;
-      while (counter <= taskCounter) {
-        const tableItem = {
-          key_type: "u64",
-          value_type: `${MODULE_ADDRESS}::todolist::Task`,
-          key: `${counter}`,
-        };
-        const task = await client.getTableItem<Task>({ handle: tableHandle, data: tableItem });
-        tasks.push(task);
-        counter++;
-      }
-
-      console.log(tasks, 'tasks');
-    } catch (error) {
-      console.log(error, 'error');
-    }
-  };
 
   const createList = async () => {
     try {
@@ -92,7 +49,7 @@ export default function TaskPage() {
         return;
       }
       // build transaction
-      const payload = {
+      const payload: InputGenerateTransactionPayloadData = {
         function: `${MODULE_ADDRESS}::todolist::create_list`,
         functionArguments: []
       };
@@ -138,7 +95,7 @@ export default function TaskPage() {
       }
 
       // build transaction
-      const payload = {
+      const payload: InputGenerateTransactionPayloadData = {
         function: `${MODULE_ADDRESS}::todolist::create_task`,
         functionArguments: ["New Task"]
       };
@@ -177,10 +134,6 @@ export default function TaskPage() {
     }
   }
 
-  useEffect(() => {
-    fetchData();
-  }, [account, fetchData]);
-
   return (
     <>
       <div className="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex">
@@ -196,7 +149,7 @@ export default function TaskPage() {
             <WalletButtons />
           </div>
         </div>
-        <DataTable data={[]} columns={columns} />
+        <DataTable columns={columns} />
         <Button onClick={createList}>Create list</Button>
         <Button onClick={createTask}>Add task</Button>
         <Button>Complete task</Button>
