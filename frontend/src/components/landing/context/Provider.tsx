@@ -1,6 +1,7 @@
-import React, { useMemo, useReducer } from 'react';
 // import { useChainId } from 'wagmi';
 import Debug from 'debug';
+import React, { useMemo, useReducer } from 'react';
+
 import LandingContext from './Context';
 import reducerDefault, { generateInitialState } from './reducer';
 

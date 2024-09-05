@@ -1,5 +1,6 @@
 // https://stackoverflow.com/questions/57298149/react-ts-usecontext-usereducer-hook
-import { createContext, type Dispatch } from 'react';
+import { type Dispatch,createContext } from 'react';
+
 import { type InitialLandingState } from './types';
 
 // Create context with initial values

@@ -1,18 +1,20 @@
 // https://github.com/redux-utilities/redux-actions/blob/master/src/handleAction.js
 // https://redux.js.org/tutorials/fundamentals/part-3-state-actions-reducers#creating-the-root-reducer
 import Debug from 'debug';
+
 import { createReducer } from '@/lib/middlewares';
-import { type InitialLandingState } from '../types';
+
 import {
-  FETCH_LIST_REQUEST,
-  FETCH_LIST_SUCCESS,
-  FETCH_LIST_FAILURE,
-} from '../constants';
-import {
+  handleListFailure,
   handleListRequest,
   handleListSuccess,
-  handleListFailure,
 } from './tasks';
+import {
+  FETCH_LIST_FAILURE,
+  FETCH_LIST_REQUEST,
+  FETCH_LIST_SUCCESS,
+} from '../constants';
+import { type InitialLandingState } from '../types';
 
 const debug = Debug('views:landing:context:reducer');
 

@@ -1,6 +1,7 @@
-import { type Action } from '@/lib/middlewares/types';
-import { type InitialLandingState, type Task } from '../types';
 import { HTTP_STATUS } from '@/lib/constants';
+import { type Action } from '@/lib/middlewares/types';
+
+import { type InitialLandingState, type Task } from '../types';
 
 export const handleListRequest = (state: InitialLandingState): InitialLandingState => ({
   ...state,

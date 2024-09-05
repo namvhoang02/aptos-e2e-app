@@ -4,10 +4,12 @@
 import {
   useWallet,
 } from "@aptos-labs/wallet-adapter-react";
-import { Button, ButtonProps } from '@/components/ui/button';
 import { FC } from 'react'
-import { Dots } from '@/components/ui/dots';
+
 import { useIsMounted } from '@/lib/hooks/useIsMounted';
+
+import { Button, ButtonProps } from '@/components/ui/button';
+import { Dots } from '@/components/ui/dots';
 // import { ConnectButton } from '../../components/connect-button'
 
 const Connect: FC<ButtonProps> = ({

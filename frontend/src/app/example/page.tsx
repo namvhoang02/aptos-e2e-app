@@ -1,19 +1,20 @@
 "use client";
 
+import { Network } from "@aptos-labs/ts-sdk";
 import {
   AccountInfo,
   AptosChangeNetworkOutput,
-  NetworkInfo,
-  WalletInfo,
   isAptosNetwork,
+  NetworkInfo,
   useWallet,
+  WalletInfo,
 } from "@aptos-labs/wallet-adapter-react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import Image from "next/image";
-import { LabelValueGrid, DisplayValue } from "@/components/LabelValueGrid";
+
+import { DisplayValue,LabelValueGrid } from "@/components/LabelValueGrid";
+import { Card, CardContent,CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from '@/components/ui/label';
-import { Network } from "@aptos-labs/ts-sdk";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 export default function Home() {
   const { account, connected, network, wallet, changeNetwork } = useWallet();

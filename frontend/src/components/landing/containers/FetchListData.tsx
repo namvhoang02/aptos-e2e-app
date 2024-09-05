@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useCallback } from 'react';
-import { HTTP_STATUS } from '@/lib/constants';
-import { fetchListRequest, fetchListFailure, fetchListSuccess } from '../context/actions';
-import { useLandingContext } from '../context/selectors';
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
+import { useCallback,useEffect } from 'react';
+
 import { getAptosClient } from "@/lib/aptosClient";
+import { HTTP_STATUS } from '@/lib/constants';
 import { MODULE_ADDRESS } from "@/lib/constants";
+
+import { fetchListFailure, fetchListRequest, fetchListSuccess } from '../context/actions';
+import { useLandingContext } from '../context/selectors';
 import { type Task } from "../context/types";
 
 function convertTask(task: any): Task {

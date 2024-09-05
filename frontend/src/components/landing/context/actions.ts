@@ -1,5 +1,6 @@
 // import type { WriteContractErrorType, WaitForTransactionReceiptErrorType } from '@wagmi/core';
 import {
+  FETCH_LIST_FAILURE,
   // WITHDRAW_CREDITS_REQUEST,
   // WITHDRAW_CREDITS_PREPARING,
   // WITHDRAW_CREDITS_PENDING,
@@ -7,9 +8,7 @@ import {
   // WITHDRAW_CREDITS_FAILURE,
   // WITHDRAW_CREDITS_ERROR,
   FETCH_LIST_REQUEST,
-  FETCH_LIST_SUCCESS,
-  FETCH_LIST_FAILURE
-} from './constants';
+  FETCH_LIST_SUCCESS} from './constants';
 import { type Task } from './types';
 
 export const fetchListRequest = () => ({

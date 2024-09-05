@@ -10,15 +10,15 @@ import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { getAptosClient } from "@/lib/aptosClient"
 import { MODULE_ADDRESS } from "@/lib/constants";
 
+import FetchListData from "@/components/landing/containers/FetchListData";
+import { useLandingContext } from "@/components/landing/context/selectors";
 import { Button } from "@/components/ui/button";
 // import { taskSchema } from "./data/schema"
 import { WalletButtons } from "@/components/WalletButtons"
 
+import { columns } from "./components/columns";
 import { DataTable } from "./components/data-table"
 import { UserNav } from "./components/user-nav"
-import FetchListData from "@/components/landing/containers/FetchListData";
-import { useLandingContext } from "@/components/landing/context/selectors";
-import { columns } from "./components/columns";
 
 // export const metadata: Metadata = {
 //   title: "Tasks",
@@ -42,8 +42,6 @@ import { columns } from "./components/columns";
 
 export default function Page() {
   const { state } = useLandingContext(); // Get state and dispatch function from context
-
-  console.log(state, 'state');
 
   const tasks = state.list.map((id: string) => state.data[id]);
   
@@ -119,8 +117,6 @@ export default function Page() {
         options: { estimateGasUnitPrice: true, estimateMaxGasAmount: true, estimatePrioritizedGasUnitPrice: true },
       })
 
-      console.log(userTransaction, 'userTransaction');
-
       const pendingTxn = await signAndSubmitTransaction({
         data: payload,
         options: {
@@ -158,7 +154,7 @@ export default function Page() {
             <WalletButtons />
           </div>
         </div>
-        <DataTable data={tasks} columns={columns}/>
+        <DataTable fetchStatus={state.fetchStatus} data={tasks} columns={columns}/>
         <Button onClick={createList}>Create list</Button>
         <Button onClick={createTask}>Add task</Button>
         <Button>Complete task</Button>
