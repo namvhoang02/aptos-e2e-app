@@ -34,80 +34,32 @@ import { DataTablePagination } from "./data-table-pagination"
 import { DataTableToolbar } from "./data-table-toolbar"
 
 interface DataTableProps<TData, TValue> {
+  data: TData[],
   columns: ColumnDef<TData, TValue>[];
 }
 
-type Task = {
-  address: string;
-  completed: boolean;
-  content: string;
-  task_id: string;
-};
-
-function convertTask(task: Task) {
-  return {
-    id: task.task_id,
-    title: task.content,
-    status: task.completed ? 'done' : 'backlog',
-  }
-}
-
 export function DataTable<TData, TValue>({
+  data,
   columns,
 }: DataTableProps<TData, TValue>) {
+  // console.log(tasks, 'tasks');
+
   const { connected } = useWallet();
 
-  const [rowSelection, setRowSelection] = useState({})
+  const [rowSelection, setRowSelection] = useState({});
+
   const [columnVisibility, setColumnVisibility] =
-    useState<VisibilityState>({})
+    useState<VisibilityState>({});
+
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
     []
   );
 
   const [sorting, setSorting] = useState<SortingState>([])
 
-  const { account } = useWallet();
-
-  const [tasks, setTasks] = useState<any>([]);
-
-  const client = getAptosClient();
-
-  const fetchData = async () => {
-    try {
-      if (!account) {
-        return;
-      }
-
-      const todoListResource = await client.getAccountResource({
-        accountAddress: account.address,
-        resourceType: `${MODULE_ADDRESS}::todolist::TodoList`
-      });
-
-      // tasks table handle
-      const tableHandle = (todoListResource as any).tasks.handle;
-      // tasks table counter
-      const taskCounter = (todoListResource as any).task_counter;
-
-      const tasks: Task[] = [];
-      let counter = 1;
-      while (counter <= taskCounter) {
-        const tableItem = {
-          key_type: "u64",
-          value_type: `${MODULE_ADDRESS}::todolist::Task`,
-          key: `${counter}`,
-        };
-        const task = await client.getTableItem<Task>({ handle: tableHandle, data: tableItem });
-        tasks.push(task);
-        counter++;
-      }
-      setTasks(tasks.map(convertTask));
-    } catch (error) {
-      console.log(error, 'error');
-    }
-  };
-
   const table = useReactTable({
-    data: tasks,
+    // https://github.com/TanStack/table/issues/4240
+    data,
     columns,
     state: {
       sorting,
@@ -127,10 +79,6 @@ export function DataTable<TData, TValue>({
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
-
-  useEffect(() => {
-    fetchData();
-  }, [account, fetchData]);
 
   return (
     <div className="space-y-4">

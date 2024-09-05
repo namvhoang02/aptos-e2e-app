@@ -14,9 +14,11 @@ import { Button } from "@/components/ui/button";
 // import { taskSchema } from "./data/schema"
 import { WalletButtons } from "@/components/WalletButtons"
 
-import { columns } from "./components/columns"
 import { DataTable } from "./components/data-table"
 import { UserNav } from "./components/user-nav"
+import FetchListData from "@/components/landing/containers/FetchListData";
+import { useLandingContext } from "@/components/landing/context/selectors";
+import { columns } from "./components/columns";
 
 // export const metadata: Metadata = {
 //   title: "Tasks",
@@ -39,6 +41,12 @@ import { UserNav } from "./components/user-nav"
 // import { type Task } from "./types";
 
 export default function Page() {
+  const { state } = useLandingContext(); // Get state and dispatch function from context
+
+  console.log(state, 'state');
+
+  const tasks = state.list.map((id: string) => state.data[id]);
+  
   const { account, signAndSubmitTransaction } = useWallet();
 
   const client = getAptosClient();
@@ -133,6 +141,7 @@ export default function Page() {
       console.log(error);
     }
   }
+  console.log('page');
 
   return (
     <>
@@ -149,11 +158,12 @@ export default function Page() {
             <WalletButtons />
           </div>
         </div>
-        <DataTable columns={columns} />
+        <DataTable data={tasks} columns={columns}/>
         <Button onClick={createList}>Create list</Button>
         <Button onClick={createTask}>Add task</Button>
         <Button>Complete task</Button>
       </div>
+      <FetchListData />
     </>
   )
 }

@@ -1,6 +1,6 @@
 import { type Action } from '@/lib/middlewares/types';
 import { type InitialLandingState, type Task } from '../types';
-import { HTTP_STATUS, TRANSACTION_PROCESSING, TRANSACTION_STATUS } from '@/lib/constants';
+import { HTTP_STATUS } from '@/lib/constants';
 
 export const handleListRequest = (state: InitialLandingState): InitialLandingState => ({
   ...state,
@@ -10,8 +10,34 @@ export const handleListRequest = (state: InitialLandingState): InitialLandingSta
 
 export const handleListSuccess = (
   state: InitialLandingState,
-  action: Action<Task[]>
+  action: Action<Task[]> | undefined
 ): InitialLandingState => {
+  if (!action) {
+    return state;
+  }
+
+  const tasks = action.payload;
+  if (!tasks) {
+    return state;
+  }
+  const list: string[] = [];
+  const data: Record<string, Task> = {};
+
+  for (let i = 0; i < tasks.length; i++) {
+    const task = tasks[i];
+    if (task && task.id) {
+      list.push(task.id);
+      data[task.id] = task;
+    }
+  }
+
+  return {
+    ...state,
+    fetchStatus: HTTP_STATUS.LOADED,
+    errors: null,
+    list,
+    data,
+  };
   return {
     ...state,
   };

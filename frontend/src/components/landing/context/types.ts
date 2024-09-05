@@ -23,7 +23,4 @@ export interface InitialLandingState extends FetchStatus {
   list: string[];
   data: Record<string, Task>;
   // Immutable value
-
-  // FIXME: chuyen thanh support network id
-  chainid: number;
 }
