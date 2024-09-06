@@ -18,5 +18,5 @@ export interface ActionMeta<Payload, Meta> extends Action<Payload> {
 export type Reducer<State, Payload> = (
   // state: State | undefined,
   state: State,
-  action?: Action<Payload>
+  action?: Action<Payload>,
 ) => State;

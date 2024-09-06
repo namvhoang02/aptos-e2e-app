@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
-const nbsp = "\xa0";
+const nbsp = '\xa0';
 
 export function useTypingEffect(text: string, speed = 25) {
   const [typedText, setTypedText] = useState(nbsp);

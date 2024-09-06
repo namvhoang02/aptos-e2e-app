@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 import { HTTP_STATUS } from '@/lib/constants';
 
@@ -15,9 +15,9 @@ export const taskSchema = z.object({
   status: z.string(),
   // label: z.string(),
   // priority: z.string(),
-})
+});
 
-export type Task = z.infer<typeof taskSchema>
+export type Task = z.infer<typeof taskSchema>;
 
 export interface InitialLandingState extends FetchStatus {
   // Mutable value

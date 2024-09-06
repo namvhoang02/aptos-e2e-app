@@ -18,14 +18,15 @@ const LandingProvider: React.FC<LandingProviderProps> = ({
 }: LandingProviderProps) => {
   debug('render');
 
-  const [state, dispatch] = useReducer(
-    reducer,
-    generateInitialState()
-  );
+  const [state, dispatch] = useReducer(reducer, generateInitialState());
 
   const contextValue = useMemo(() => ({ state, dispatch }), [state, dispatch]);
 
-  return <LandingContext.Provider value={contextValue}>{children}</LandingContext.Provider>;
+  return (
+    <LandingContext.Provider value={contextValue}>
+      {children}
+    </LandingContext.Provider>
+  );
 };
 
 export default React.memo(LandingProvider);

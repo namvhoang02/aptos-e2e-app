@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   isRedirectable,
@@ -6,28 +6,24 @@ import {
   Wallet,
   WalletName,
   WalletReadyState,
-} from "@aptos-labs/wallet-adapter-react";
-import { Loader2 } from "lucide-react"
+} from '@aptos-labs/wallet-adapter-react';
+import { Loader2 } from 'lucide-react';
 
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 
 export const WalletButtons = (): any => {
   const { wallets, connected, disconnect, isLoading } = useWallet();
 
   if (connected) {
-    return (
-      <Button onClick={disconnect}>
-        Disconnect
-      </Button>
-    );
+    return <Button onClick={disconnect}>Disconnect</Button>;
   }
 
   if (isLoading || !wallets || !wallets[0]) {
     return (
       <Button disabled>
-        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+        <Loader2 className='mr-2 h-4 w-4 animate-spin' />
         Loading...
       </Button>
     );
@@ -55,7 +51,7 @@ const WalletView = ({ wallet }: { wallet: Wallet }) => {
       await connect(walletName);
     } catch (error) {
       console.warn(error);
-      window.alert("Failed to connect wallet");
+      window.alert('Failed to connect wallet');
     }
   };
 
@@ -77,7 +73,7 @@ const WalletView = ({ wallet }: { wallet: Wallet }) => {
           disabled={false}
           key={wallet.name}
           onClick={() => onWalletConnectRequest(wallet.name)}
-          style={{ maxWidth: "300px" }}
+          style={{ maxWidth: '300px' }}
         >
           Connect Wallet
         </Button>
@@ -85,11 +81,7 @@ const WalletView = ({ wallet }: { wallet: Wallet }) => {
     }
     // wallet does not have mobile app
     return (
-      <Button
-        disabled={true}
-        key={wallet.name}
-        style={{ maxWidth: "300px" }}
-      >
+      <Button disabled={true} key={wallet.name} style={{ maxWidth: '300px' }}>
         Connect Wallet - Desktop Only
       </Button>
     );
@@ -98,12 +90,12 @@ const WalletView = ({ wallet }: { wallet: Wallet }) => {
     return (
       <Button
         className={cn(
-          isWalletReady ? "hover:bg-blue-700" : "opacity-50 cursor-not-allowed"
+          isWalletReady ? 'hover:bg-blue-700' : 'opacity-50 cursor-not-allowed',
         )}
         disabled={!isWalletReady}
         key={wallet.name}
         onClick={() => onWalletConnectRequest(wallet.name)}
-        style={{ maxWidth: "300px" }}
+        style={{ maxWidth: '300px' }}
       >
         Connect Wallet
       </Button>

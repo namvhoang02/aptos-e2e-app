@@ -8,7 +8,8 @@ import {
   // WITHDRAW_CREDITS_FAILURE,
   // WITHDRAW_CREDITS_ERROR,
   FETCH_LIST_REQUEST,
-  FETCH_LIST_SUCCESS} from './constants';
+  FETCH_LIST_SUCCESS,
+} from './constants';
 import { type Task } from './types';
 
 export const fetchListRequest = () => ({

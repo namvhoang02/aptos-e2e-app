@@ -1,7 +1,10 @@
-"use client";
+'use client';
 
-import { Ed25519PublicKey, InputGenerateTransactionPayloadData } from '@aptos-labs/ts-sdk';
-import { useWallet } from "@aptos-labs/wallet-adapter-react";
+import {
+  Ed25519PublicKey,
+  InputGenerateTransactionPayloadData,
+} from '@aptos-labs/ts-sdk';
+import { useWallet } from '@aptos-labs/wallet-adapter-react';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -15,17 +18,17 @@ import {
   SortingState,
   useReactTable,
   VisibilityState,
-} from "@tanstack/react-table";
-import React, { useMemo, useState } from "react";
+} from '@tanstack/react-table';
+import React, { useMemo, useState } from 'react';
 
-import { getAptosClient } from "@/lib/aptosClient"
-import { MODULE_ADDRESS } from "@/lib/constants";
-import { HTTP_STATUS } from "@/lib/constants";
-import { useIsMounted } from "@/lib/hooks/useIsMounted";
+import { getAptosClient } from '@/lib/aptosClient';
+import { MODULE_ADDRESS } from '@/lib/constants';
+import { HTTP_STATUS } from '@/lib/constants';
+import { useIsMounted } from '@/lib/hooks/useIsMounted';
 
-import FetchListData from "@/components/landing/containers/FetchListData";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
+import FetchListData from '@/components/landing/containers/FetchListData';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Table,
   TableBody,
@@ -33,11 +36,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { WalletButtons } from "@/components/WalletButtons";
+} from '@/components/ui/table';
+import { WalletButtons } from '@/components/WalletButtons';
 
-import { DataTablePagination } from "./data-table-pagination";
-import { DataTableToolbar } from "./data-table-toolbar";
+import { DataTablePagination } from './data-table-pagination';
+import { DataTableToolbar } from './data-table-toolbar';
 
 interface DataTableProps<TData, TValue> {
   fetchStatus: string | null;
@@ -82,9 +85,9 @@ export function DataTable<TData, TValue>({
 
   const isFetching = useMemo(
     () => fetchStatus === HTTP_STATUS.LOADING,
-    [fetchStatus]
+    [fetchStatus],
   );
-  
+
   const { account, signAndSubmitTransaction } = useWallet();
 
   const client = getAptosClient();
@@ -97,33 +100,39 @@ export function DataTable<TData, TValue>({
       // build transaction
       const payload: InputGenerateTransactionPayloadData = {
         function: `${MODULE_ADDRESS}::todolist::create_list`,
-        functionArguments: []
+        functionArguments: [],
       };
       const rawTxn = await client.transaction.build.simple({
         sender: account.address,
         data: payload,
-      })
+      });
 
-      const publicKey = new Ed25519PublicKey(account.publicKey.toString())
+      const publicKey = new Ed25519PublicKey(account.publicKey.toString());
       const userTransaction = await client.transaction.simulate.simple({
         signerPublicKey: publicKey,
         transaction: rawTxn,
-        options: { estimateGasUnitPrice: true, estimateMaxGasAmount: true, estimatePrioritizedGasUnitPrice: true },
-      })
+        options: {
+          estimateGasUnitPrice: true,
+          estimateMaxGasAmount: true,
+          estimatePrioritizedGasUnitPrice: true,
+        },
+      });
 
       console.log(userTransaction, 'userTransaction');
 
       const pendingTxn = await signAndSubmitTransaction({
         data: payload,
         options: {
-          maxGasAmount: parseInt(String(Number(userTransaction[0].gas_used) * 1.2)),
+          maxGasAmount: parseInt(
+            String(Number(userTransaction[0].gas_used) * 1.2),
+          ),
           gasUnitPrice: Number(userTransaction[0].gas_unit_price),
         },
       });
 
       const response = await client.waitForTransaction({
         transactionHash: pendingTxn.hash,
-      })
+      });
       if (response && response?.success) {
         console.log({ hash: pendingTxn?.hash, result: response });
       } else {
@@ -132,33 +141,34 @@ export function DataTable<TData, TValue>({
     } catch (error: any) {
       console.log(error);
     }
-  }
+  };
 
-  const renderSkeletonRow = useMemo(() => (
-    <TableRow>
-      {columns.map((column) => (
-        <TableCell key={column.id} className="h-24 text-center">
-          {"accessorKey" in column && column.accessorKey === "id" && (
-            <Skeleton className="h-4 w-[50px]" />
-          )}
-          {"accessorKey" in column && column.accessorKey === "title" && (
-            <Skeleton className="h-4 w-[150px]" />
-          )}
-          {"accessorKey" in column && column.accessorKey === "status" && (
-            <Skeleton className="h-4 w-[100px]" />
-          )}
-          {column.id === "actions" && (
-            <Skeleton className="h-4 w-[50px]" />
-          )}
-        </TableCell>
-      ))}
-    </TableRow>
-  ), [columns]);
+  const renderSkeletonRow = useMemo(
+    () => (
+      <TableRow>
+        {columns.map((column) => (
+          <TableCell key={column.id} className='h-24 text-center'>
+            {'accessorKey' in column && column.accessorKey === 'id' && (
+              <Skeleton className='h-4 w-[50px]' />
+            )}
+            {'accessorKey' in column && column.accessorKey === 'title' && (
+              <Skeleton className='h-4 w-[150px]' />
+            )}
+            {'accessorKey' in column && column.accessorKey === 'status' && (
+              <Skeleton className='h-4 w-[100px]' />
+            )}
+            {column.id === 'actions' && <Skeleton className='h-4 w-[50px]' />}
+          </TableCell>
+        ))}
+      </TableRow>
+    ),
+    [columns],
+  );
 
   return (
-    <div className="space-y-4">
+    <div className='space-y-4'>
       <DataTableToolbar table={table} />
-      <div className="rounded-md border">
+      <div className='rounded-md border'>
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -166,7 +176,10 @@ export function DataTable<TData, TValue>({
                 {headerGroup.headers.map((header) => (
                   <TableHead key={header.id} colSpan={header.colSpan}>
                     {!header.isPlaceholder &&
-                      flexRender(header.column.columnDef.header, header.getContext())}
+                      flexRender(
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
                   </TableHead>
                 ))}
               </TableRow>
@@ -181,28 +194,36 @@ export function DataTable<TData, TValue>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center"
+                  className='h-24 text-center'
                 >
-                  No connected wallet.<br />
+                  No connected wallet.
+                  <br />
                   <WalletButtons />
                 </TableCell>
               </TableRow>
             )}
 
             {/** Case 3: Mounted, fetching data or wallet is loading */}
-            {isMounted && ((connected && isFetching) || isLoading) && renderSkeletonRow}
+            {isMounted &&
+              ((connected && isFetching) || isLoading) &&
+              renderSkeletonRow}
 
             {/** Case 4: Mounted, connected, and has data */}
-            {isMounted && connected && !isFetching && (
-              table.getRowModel().rows.length ? (
+            {isMounted &&
+              connected &&
+              !isFetching &&
+              (table.getRowModel().rows.length ? (
                 table.getRowModel().rows.map((row) => (
                   <TableRow
                     key={row.id}
-                    data-state={row.getIsSelected() && "selected"}
+                    data-state={row.getIsSelected() && 'selected'}
                   >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
                       </TableCell>
                     ))}
                   </TableRow>
@@ -211,14 +232,14 @@ export function DataTable<TData, TValue>({
                 <TableRow>
                   <TableCell
                     colSpan={columns.length}
-                    className="h-24 text-center"
+                    className='h-24 text-center'
                   >
-                    No results.<br />
+                    No results.
+                    <br />
                     <Button onClick={createList}>Create your list</Button>
                   </TableCell>
                 </TableRow>
-              )
-            )}
+              ))}
 
             {/** Case 5: Mounted, connected, fetch data */}
             {isMounted && connected && (

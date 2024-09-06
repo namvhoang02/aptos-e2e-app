@@ -27,7 +27,7 @@ export function generateInitialState(): InitialLandingState {
     fetchStatus: null,
     errors: null,
     list: [],
-    data: {}
+    data: {},
   };
 }
 

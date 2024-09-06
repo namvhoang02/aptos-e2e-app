@@ -14,7 +14,13 @@ export type IndexProps<I, A> = {
   after: any;
 };
 
-export function applyMiddlewares<I, A>({ state, action, handler, before, after }: IndexProps<I, A>) {
+export function applyMiddlewares<I, A>({
+  state,
+  action,
+  handler,
+  before,
+  after,
+}: IndexProps<I, A>) {
   debug('apply middlewares');
 
   let chain: any = [];
@@ -36,7 +42,10 @@ export function applyMiddlewares<I, A>({ state, action, handler, before, after }
     chain = [...chain, ...after];
   }
 
-  return chain.reduce((st: I, fn: Reducer<I, any>) => fn(st, action as Action<any>), state);
+  return chain.reduce(
+    (st: I, fn: Reducer<I, any>) => fn(st, action as Action<any>),
+    state,
+  );
 }
 
 export type CreateReducerParams<I> = {
@@ -45,12 +54,19 @@ export type CreateReducerParams<I> = {
   after?: Reducer<I, any>[];
 };
 
-export function createReducer<I>({ handlers, before, after }: CreateReducerParams<I>) {
+export function createReducer<I>({
+  handlers,
+  before,
+  after,
+}: CreateReducerParams<I>) {
   debug('create reducer');
   return (state: I, action: Action<any>) => {
     debug('run reducer');
 
-    if (!action.type || !Object.prototype.hasOwnProperty.call(handlers, action.type)) {
+    if (
+      !action.type ||
+      !Object.prototype.hasOwnProperty.call(handlers, action.type)
+    ) {
       return state;
     }
 

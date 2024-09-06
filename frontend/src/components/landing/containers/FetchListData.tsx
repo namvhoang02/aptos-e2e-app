@@ -1,22 +1,26 @@
-"use client";
+'use client';
 
-import { useWallet } from "@aptos-labs/wallet-adapter-react";
-import { useCallback,useEffect } from 'react';
+import { useWallet } from '@aptos-labs/wallet-adapter-react';
+import { useCallback, useEffect } from 'react';
 
-import { getAptosClient } from "@/lib/aptosClient";
+import { getAptosClient } from '@/lib/aptosClient';
 import { HTTP_STATUS } from '@/lib/constants';
-import { MODULE_ADDRESS } from "@/lib/constants";
+import { MODULE_ADDRESS } from '@/lib/constants';
 
-import { fetchListFailure, fetchListRequest, fetchListSuccess } from '../context/actions';
+import {
+  fetchListFailure,
+  fetchListRequest,
+  fetchListSuccess,
+} from '../context/actions';
 import { useLandingContext } from '../context/selectors';
-import { type Task } from "../context/types";
+import { type Task } from '../context/types';
 
 function convertTask(task: any): Task {
   return {
     id: task.task_id,
     title: task.content,
     status: task.completed ? 'done' : 'backlog',
-  }
+  };
 }
 
 const FetchListData = () => {
@@ -29,28 +33,31 @@ const FetchListData = () => {
       console.error('No account address available.');
       return; // Return early if account address is undefined
     }
-  
+
     try {
       const todoListResource = await client.getAccountResource({
         accountAddress: account.address, // Now guaranteed to be defined
-        resourceType: `${MODULE_ADDRESS}::todolist::TodoList`
+        resourceType: `${MODULE_ADDRESS}::todolist::TodoList`,
       });
-  
+
       // tasks table handle
       const tableHandle = (todoListResource as any).tasks.handle;
-  
+
       // tasks table counter
       const taskCounter = (todoListResource as any).task_counter;
-  
+
       const tasks: Task[] = [];
       let counter = 1;
       while (counter <= taskCounter) {
         const tableItem = {
-          key_type: "u64",
+          key_type: 'u64',
           value_type: `${MODULE_ADDRESS}::todolist::Task`,
           key: `${counter}`,
         };
-        const task = await client.getTableItem<Task>({ handle: tableHandle, data: tableItem });
+        const task = await client.getTableItem<Task>({
+          handle: tableHandle,
+          data: tableItem,
+        });
         tasks.push(convertTask(task));
         counter++;
       }
@@ -60,7 +67,6 @@ const FetchListData = () => {
       dispatch(fetchListFailure(error)); // Dispatch failure action with error
     }
   }, [account, dispatch]);
-  
 
   useEffect(() => {
     if (state.fetchStatus === HTTP_STATUS.LOADING) {

@@ -3,7 +3,9 @@ import { type Action } from '@/lib/middlewares/types';
 
 import { type InitialLandingState, type Task } from '../types';
 
-export const handleListRequest = (state: InitialLandingState): InitialLandingState => ({
+export const handleListRequest = (
+  state: InitialLandingState,
+): InitialLandingState => ({
   ...state,
   fetchStatus: HTTP_STATUS.LOADING,
   errors: null,
@@ -11,7 +13,7 @@ export const handleListRequest = (state: InitialLandingState): InitialLandingSta
 
 export const handleListSuccess = (
   state: InitialLandingState,
-  action: Action<Task[]> | undefined
+  action: Action<Task[]> | undefined,
 ): InitialLandingState => {
   if (!action) {
     return state;
@@ -44,7 +46,10 @@ export const handleListSuccess = (
   };
 };
 
-export const handleListFailure = (state: InitialLandingState, action: Action<any>): InitialLandingState => ({
+export const handleListFailure = (
+  state: InitialLandingState,
+  action: Action<any>,
+): InitialLandingState => ({
   ...state,
   fetchStatus: HTTP_STATUS.FAILED,
   errors: action.payload,

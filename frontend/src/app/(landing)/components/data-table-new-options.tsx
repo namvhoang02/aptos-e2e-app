@@ -1,18 +1,21 @@
-"use client"
+'use client';
 
-import { Ed25519PublicKey, InputGenerateTransactionPayloadData } from '@aptos-labs/ts-sdk';
-import { useWallet } from "@aptos-labs/wallet-adapter-react";
+import {
+  Ed25519PublicKey,
+  InputGenerateTransactionPayloadData,
+} from '@aptos-labs/ts-sdk';
+import { useWallet } from '@aptos-labs/wallet-adapter-react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Plus } from "lucide-react";
+import { Plus } from 'lucide-react';
 import * as React from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import { getAptosClient } from "@/lib/aptosClient"
+import { getAptosClient } from '@/lib/aptosClient';
 // import { useToast } from "@/components/ui/use-toast";
-import { MODULE_ADDRESS } from "@/lib/constants";
+import { MODULE_ADDRESS } from '@/lib/constants';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -21,7 +24,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import {
   Form,
   FormControl,
@@ -67,7 +70,7 @@ export function DataTableNewOptions() {
   } = form;
 
   const onSubmit: SubmitHandler<FormSchemaType> = async (
-    data: FormSchemaType
+    data: FormSchemaType,
   ) => {
     if (!account?.address) {
       console.error('No account address available.');
@@ -77,31 +80,37 @@ export function DataTableNewOptions() {
       // build transaction
       const payload: InputGenerateTransactionPayloadData = {
         function: `${MODULE_ADDRESS}::todolist::create_task`,
-        functionArguments: [data.title]
+        functionArguments: [data.title],
       };
       const rawTxn = await client.transaction.build.simple({
         sender: account.address,
         data: payload,
       });
 
-      const publicKey = new Ed25519PublicKey(account.publicKey.toString())
+      const publicKey = new Ed25519PublicKey(account.publicKey.toString());
       const userTransaction = await client.transaction.simulate.simple({
         signerPublicKey: publicKey,
         transaction: rawTxn,
-        options: { estimateGasUnitPrice: true, estimateMaxGasAmount: true, estimatePrioritizedGasUnitPrice: true },
-      })
+        options: {
+          estimateGasUnitPrice: true,
+          estimateMaxGasAmount: true,
+          estimatePrioritizedGasUnitPrice: true,
+        },
+      });
 
       const pendingTxn = await signAndSubmitTransaction({
         data: payload,
         options: {
-          maxGasAmount: parseInt(String(Number(userTransaction[0].gas_used) * 1.2)),
+          maxGasAmount: parseInt(
+            String(Number(userTransaction[0].gas_used) * 1.2),
+          ),
           gasUnitPrice: Number(userTransaction[0].gas_unit_price),
         },
       });
 
       const response = await client.waitForTransaction({
         transactionHash: pendingTxn.hash,
-      })
+      });
       if (response && response?.success) {
         console.log({ hash: pendingTxn?.hash, result: response });
       } else {
@@ -129,15 +138,12 @@ export function DataTableNewOptions() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button
-          size="sm"
-          className="ml-auto hidden h-8 lg:flex"
-        >
-          <Plus className="mr-2 h-4 w-4" />
+        <Button size='sm' className='ml-auto hidden h-8 lg:flex'>
+          <Plus className='mr-2 h-4 w-4' />
           New
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className='sm:max-w-[425px]'>
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmit)}>
             <DialogHeader>
