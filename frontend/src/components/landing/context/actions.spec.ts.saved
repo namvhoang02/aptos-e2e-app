@@ -1,0 +1,33 @@
+import { fetchReferralDataRequest, fetchCreditDataRequest, withdrawCreditPreparing } from './actions';
+import { FETCH_REFERRAL_DATA_REQUEST, FETCH_CREDIT_DATA_REQUEST, WITHDRAW_CREDITS_PREPARING } from './constants';
+
+describe('views/landing/context/actions', () => {
+  describe('fetchReferralDataRequest', () => {
+    it('should create an action to fetch referral data', () => {
+      const expectedAction = {
+        type: FETCH_REFERRAL_DATA_REQUEST,
+      };
+
+      expect(fetchReferralDataRequest()).toEqual(expectedAction);
+    });
+  });
+  describe('fetchCreditDataRequest', () => {
+    it('should create an action to fetch credit data', () => {
+      const expectedAction = {
+        type: FETCH_CREDIT_DATA_REQUEST,
+      };
+
+      expect(fetchCreditDataRequest()).toEqual(expectedAction);
+    });
+  });
+
+  describe('withdrawCreditPreparing', () => {
+    it('should create an action to signal preparation for credit withdrawal', () => {
+      const expectedAction = {
+        type: WITHDRAW_CREDITS_PREPARING,
+      };
+
+      expect(withdrawCreditPreparing()).toEqual(expectedAction);
+    });
+  });
+});

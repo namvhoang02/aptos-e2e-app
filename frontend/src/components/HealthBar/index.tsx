@@ -1,9 +1,9 @@
-import { range } from "@/lib/range";
+import { range } from '@/lib/range';
 
 export interface HealthBarProps {
   totalHealth: number;
   currentHealth: number;
-  icon: "heart" | "star";
+  icon: 'heart' | 'star';
 }
 
 export function HealthBar({
@@ -16,7 +16,7 @@ export function HealthBar({
   const emptyIcons = Math.floor((totalHealth - currentHealth) / 2);
 
   return (
-    <div className="flex flex-wrap gap-1">
+    <div className='flex flex-wrap gap-1'>
       {range(fullIcons).map((i) => (
         <i key={i} className={`nes-icon ${icon}`} />
       ))}

@@ -1,9 +1,9 @@
-import { Body } from "./Body";
-import { Header } from "./Header";
+import { Body } from './Body';
+import { Header } from './Header';
 
 export default function Home() {
   return (
-    <main className="flex flex-col">
+    <main className='flex flex-col'>
       <Header />
       <Body />
     </main>

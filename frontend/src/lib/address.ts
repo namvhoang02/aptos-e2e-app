@@ -5,6 +5,6 @@ export function padAddressIfNeeded(address: string) {
     return address;
   }
   const paddingNeeded = 66 - address.length;
-  const padding = "0".repeat(paddingNeeded);
+  const padding = '0'.repeat(paddingNeeded);
   return `0x${padding}${address.slice(2)}`;
 }

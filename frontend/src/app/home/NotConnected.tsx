@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
-import { Button } from "@/components/ui/button"
+import { Button } from '@/components/ui/button';
 // import { Pet } from "./Pet";
 // import { PetImage, bodies, ears, faces } from "./Pet/Image";
 // import { ShuffleButton } from "@/components/ShuffleButton";
@@ -43,7 +43,7 @@ export function NotConnected() {
 
   return (
     <>
-      <div className="flex flex-col gap-6 p-6">
+      <div className='flex flex-col gap-6 p-6'>
         {/* <div className="flex flex-col gap-6 self-center">
         <PetImage
           pet={defaultPet}
@@ -62,7 +62,6 @@ export function NotConnected() {
       </div>
       <Button>Click me</Button>
        */}
-
       </div>
       <FormSignIn />
     </>
@@ -71,15 +70,14 @@ export function NotConnected() {
 
 function FormSignIn() {
   const [data, setData] = useState<{
-    type: "heads" | "tails"; // Ensure type is restricted to "heads" or "tails"
+    type: 'heads' | 'tails'; // Ensure type is restricted to "heads" or "tails"
     sol: number;
   }>({
-    type: "heads", // Default value
+    type: 'heads', // Default value
     sol: 0.05,
   });
 
-
-  const handleTypeClick = (type: "heads" | "tails") => {
+  const handleTypeClick = (type: 'heads' | 'tails') => {
     setData({
       ...data,
       type,
@@ -94,7 +92,7 @@ function FormSignIn() {
   };
 
   return (
-    <div className="form-signin max-w-[420px] w-full m-auto text-center">
+    <div className='form-signin max-w-[420px] w-full m-auto text-center'>
       {/* <img
         className="mb-3 logo h-[200px] w-[200px]"
         src="https://i.imgur.com/FjUZXhp.png"
@@ -103,11 +101,19 @@ function FormSignIn() {
         height="128"
       /> */}
       {/* <InsuranceButton /> */}
-      <LikeForSection handleTypeClick={handleTypeClick} type={data.type} className="sm:mt-6 my-2" />
-      <SolOptions handleSolClick={handleSolClick} sol={data.sol} className="sm:mt-6 my-2" />
+      <LikeForSection
+        handleTypeClick={handleTypeClick}
+        type={data.type}
+        className='sm:mt-6 my-2'
+      />
+      <SolOptions
+        handleSolClick={handleSolClick}
+        sol={data.sol}
+        className='sm:mt-6 my-2'
+      />
       {/* <Warnings /> */}
       {/* <ActionLinks /> */}
-      <Button className="sm:mt-6 my-2">Double or nothing</Button>
+      <Button className='sm:mt-6 my-2'>Double or nothing</Button>
     </div>
   );
 }
@@ -143,11 +149,20 @@ function FormSignIn() {
 //   );
 // }
 
-function SolOptions({ handleSolClick, sol, className, ...props }: { handleSolClick: (sol: number) => void; sol: number; className?: string }) {
+function SolOptions({
+  handleSolClick,
+  sol,
+  className,
+  ...props
+}: {
+  handleSolClick: (sol: number) => void;
+  sol: number;
+  className?: string;
+}) {
   return (
     <div className={className} {...props}>
-      <h3 className="mb-2">FOR</h3>
-      <div className="row mb-1 grid grid-cols-3 gap-4">
+      <h3 className='mb-2'>FOR</h3>
+      <div className='row mb-1 grid grid-cols-3 gap-4'>
         <Button onClick={() => handleSolClick(0.05)}>0.05 APT</Button>
         <Button onClick={() => handleSolClick(0.1)}>0.1 APT</Button>
         <Button onClick={() => handleSolClick(0.25)}>0.25 APT</Button>
@@ -173,13 +188,22 @@ function SolOptions({ handleSolClick, sol, className, ...props }: { handleSolCli
 //   );
 // }
 
-function LikeForSection({ handleTypeClick, type, className, ...props }: { handleTypeClick: (type: "heads" | "tails") => void; type: "heads" | "tails"; className?: string }) {
+function LikeForSection({
+  handleTypeClick,
+  type,
+  className,
+  ...props
+}: {
+  handleTypeClick: (type: 'heads' | 'tails') => void;
+  type: 'heads' | 'tails';
+  className?: string;
+}) {
   return (
     <div className={className} {...props}>
-      <h3 className="mb-2">I LIKE</h3>
-      <div className="row mb-1 grid grid-cols-2 gap-4">
-        <Button onClick={() => handleTypeClick("heads")}>Heads</Button>
-        <Button onClick={() => handleTypeClick("tails")}>Tails</Button>
+      <h3 className='mb-2'>I LIKE</h3>
+      <div className='row mb-1 grid grid-cols-2 gap-4'>
+        <Button onClick={() => handleTypeClick('heads')}>Heads</Button>
+        <Button onClick={() => handleTypeClick('tails')}>Tails</Button>
       </div>
     </div>
   );

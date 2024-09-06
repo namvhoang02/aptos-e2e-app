@@ -4,3 +4,4 @@ sync:
     ignore:
       paths:
         - node_modules
+        - .next

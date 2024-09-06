@@ -1,0 +1,23 @@
+'use client';
+
+import { useWallet } from '@aptos-labs/wallet-adapter-react';
+import { FC, ReactNode } from 'react';
+import { useIsMounted } from '@/lib/hooks/useIsMounted';
+
+interface WalletConnectionGuardProps {
+  children: ReactNode;
+  fallback: ReactNode;
+}
+
+const WalletConnectionGuard: FC<WalletConnectionGuardProps> = ({ children, fallback }) => {
+  const isMounted = useIsMounted();
+  const { connected } = useWallet();
+
+  if (!isMounted) return <>{fallback}</>;
+
+  if (!connected) return <>{fallback}</>;
+
+  return <>{children}</>;
+};
+
+export { WalletConnectionGuard };
