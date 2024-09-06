@@ -6,7 +6,9 @@ import "./globals.css";
 import { fontSans } from "@/lib/fonts"
 import { cn } from "@/lib/utils"
 
-import { Providers } from './providers'
+import { Toaster } from '@/components/ui/toaster';
+
+import { Providers } from './providers';
 
 export const metadata: Metadata = {
   title: "Boilerplate",
@@ -20,7 +22,11 @@ export default function RootLayout({ children }: PropsWithChildren) {
         "min-h-screen bg-background font-sans antialiased",
         fontSans.variable
       )}>
-        <Providers>{children}</Providers>
+        <Providers>
+          {children}
+          <Toaster />
+
+        </Providers>
       </body>
     </html>
   );

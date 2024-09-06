@@ -2,24 +2,19 @@
 
 // import { promises as fs } from "fs"
 // import { type Metadata } from "next";
-import { Ed25519PublicKey, InputGenerateTransactionPayloadData } from '@aptos-labs/ts-sdk';
 // import path from "path"
 // import { z } from "zod"
-import { useWallet } from "@aptos-labs/wallet-adapter-react";
 
-import { getAptosClient } from "@/lib/aptosClient"
-import { MODULE_ADDRESS } from "@/lib/constants";
 
 import { useLandingContext } from "@/components/landing/context/selectors";
-import { Button } from "@/components/ui/button";
+import { WalletButton } from "@/components/WalletButton";
 // import { taskSchema } from "./data/schema"
 import { WalletButtons } from "@/components/WalletButtons"
+import { WalletMenu } from "@/components/WalletMenu";
 
 import { columns } from "./components/columns";
 import { DataTable } from "./components/data-table"
 import { UserNav } from "./components/user-nav"
-import { WalletMenu } from "@/components/WalletMenu";
-import { WalletButton } from "@/components/WalletButton";
 
 // export const metadata: Metadata = {
 //   title: "Tasks",
@@ -44,102 +39,7 @@ import { WalletButton } from "@/components/WalletButton";
 export default function Page() {
   const { state } = useLandingContext(); // Get state and dispatch function from context
 
-  console.log(state, 'state');
-
   const tasks = state.list.map((id: string) => state.data[id]);
-  
-  const { account, signAndSubmitTransaction } = useWallet();
-
-  const client = getAptosClient();
-
-  const createList = async () => {
-    try {
-      if (!account) {
-        return;
-      }
-      // build transaction
-      const payload: InputGenerateTransactionPayloadData = {
-        function: `${MODULE_ADDRESS}::todolist::create_list`,
-        functionArguments: []
-      };
-      const rawTxn = await client.transaction.build.simple({
-        sender: account.address,
-        data: payload,
-      })
-
-      const publicKey = new Ed25519PublicKey(account.publicKey.toString())
-      const userTransaction = await client.transaction.simulate.simple({
-        signerPublicKey: publicKey,
-        transaction: rawTxn,
-        options: { estimateGasUnitPrice: true, estimateMaxGasAmount: true, estimatePrioritizedGasUnitPrice: true },
-      })
-
-      console.log(userTransaction, 'userTransaction');
-
-      const pendingTxn = await signAndSubmitTransaction({
-        data: payload,
-        options: {
-          maxGasAmount: parseInt(String(Number(userTransaction[0].gas_used) * 1.2)),
-          gasUnitPrice: Number(userTransaction[0].gas_unit_price),
-        },
-      });
-
-      const response = await client.waitForTransaction({
-        transactionHash: pendingTxn.hash,
-      })
-      if (response && response?.success) {
-        console.log({ hash: pendingTxn?.hash, result: response });
-      } else {
-        console.log({ message: response.vm_status || 'Transaction error!' });
-      }
-    } catch (error: any) {
-      console.log(error);
-    }
-  }
-
-  const createTask = async () => {
-    try {
-      if (!account) {
-        return;
-      }
-
-      // build transaction
-      const payload: InputGenerateTransactionPayloadData = {
-        function: `${MODULE_ADDRESS}::todolist::create_task`,
-        functionArguments: ["New Task"]
-      };
-      const rawTxn = await client.transaction.build.simple({
-        sender: account.address,
-        data: payload,
-      });
-
-      const publicKey = new Ed25519PublicKey(account.publicKey.toString())
-      const userTransaction = await client.transaction.simulate.simple({
-        signerPublicKey: publicKey,
-        transaction: rawTxn,
-        options: { estimateGasUnitPrice: true, estimateMaxGasAmount: true, estimatePrioritizedGasUnitPrice: true },
-      })
-
-      const pendingTxn = await signAndSubmitTransaction({
-        data: payload,
-        options: {
-          maxGasAmount: parseInt(String(Number(userTransaction[0].gas_used) * 1.2)),
-          gasUnitPrice: Number(userTransaction[0].gas_unit_price),
-        },
-      });
-
-      const response = await client.waitForTransaction({
-        transactionHash: pendingTxn.hash,
-      })
-      if (response && response?.success) {
-        console.log({ hash: pendingTxn?.hash, result: response });
-      } else {
-        console.log({ message: response.vm_status || 'Transaction error!' });
-      }
-    } catch (error: any) {
-      console.log(error);
-    }
-  }
 
   return (
     <>
@@ -157,9 +57,6 @@ export default function Page() {
           </div>
         </div>
         <DataTable fetchStatus={state.fetchStatus} data={tasks} columns={columns}/>
-        <Button onClick={createList}>Create list</Button>
-        <Button onClick={createTask}>Add task</Button>
-        <Button>Complete task</Button>
         <WalletMenu />
         <WalletButton />
       </div>

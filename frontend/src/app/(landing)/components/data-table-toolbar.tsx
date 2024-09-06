@@ -1,14 +1,14 @@
 "use client"
 
-import { Plus } from "lucide-react";
-import { Cross2Icon } from "@radix-ui/react-icons"
-import { Table } from "@tanstack/react-table"
+import { Cross2Icon } from "@radix-ui/react-icons";
+import { Table } from "@tanstack/react-table";
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
-import { DataTableFacetedFilter } from "./data-table-faceted-filter"
-import { DataTableViewOptions } from "./data-table-view-options"
+import { DataTableFacetedFilter } from "./data-table-faceted-filter";
+import { DataTableNewOptions } from "./data-table-new-options";
+import { DataTableViewOptions } from "./data-table-view-options";
 import { statuses } from "../data/data"
 
 interface DataTableToolbarProps<TData> {
@@ -51,13 +51,7 @@ export function DataTableToolbar<TData>({
       </div>
       <div className="flex flex-1 items-center space-x-2">
         <DataTableViewOptions table={table} />
-        <Button
-          size="sm"
-          className="ml-auto hidden h-8 lg:flex"
-        >
-          <Plus className="mr-2 h-4 w-4" />
-          New
-        </Button>
+        <DataTableNewOptions />
       </div>
     </div>
   )

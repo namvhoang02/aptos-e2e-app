@@ -6,9 +6,6 @@ import { truncateAddress, useWallet } from "@aptos-labs/wallet-adapter-react";
 import {
   Wallet,
 } from "lucide-react"
-import React from "react";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
   Cloud,
   CreditCard,
@@ -25,6 +22,10 @@ import {
   UserPlus,
   Users,
 } from "lucide-react"
+import React from "react";
+
+import { Avatar, AvatarFallback,AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,

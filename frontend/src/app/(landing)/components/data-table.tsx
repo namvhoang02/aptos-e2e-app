@@ -1,5 +1,6 @@
 "use client";
 
+import { Ed25519PublicKey, InputGenerateTransactionPayloadData } from '@aptos-labs/ts-sdk';
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import {
   ColumnDef,
@@ -15,9 +16,16 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table";
-import React, { useState, useMemo } from "react";
+import React, { useMemo, useState } from "react";
 
+import { getAptosClient } from "@/lib/aptosClient"
+import { MODULE_ADDRESS } from "@/lib/constants";
+import { HTTP_STATUS } from "@/lib/constants";
+import { useIsMounted } from "@/lib/hooks/useIsMounted";
+
+import FetchListData from "@/components/landing/containers/FetchListData";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -27,10 +35,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { WalletButtons } from "@/components/WalletButtons";
-import { Skeleton } from "@/components/ui/skeleton";
-import FetchListData from "@/components/landing/containers/FetchListData";
-import { useIsMounted } from "@/lib/hooks/useIsMounted";
-import { HTTP_STATUS } from "@/lib/constants";
+
 import { DataTablePagination } from "./data-table-pagination";
 import { DataTableToolbar } from "./data-table-toolbar";
 
@@ -76,9 +81,58 @@ export function DataTable<TData, TValue>({
   });
 
   const isFetching = useMemo(
-    () => fetchStatus === HTTP_STATUS.LOADING || fetchStatus === null,
+    () => fetchStatus === HTTP_STATUS.LOADING,
     [fetchStatus]
   );
+  
+  const { account, signAndSubmitTransaction } = useWallet();
+
+  const client = getAptosClient();
+
+  const createList = async () => {
+    try {
+      if (!account) {
+        return;
+      }
+      // build transaction
+      const payload: InputGenerateTransactionPayloadData = {
+        function: `${MODULE_ADDRESS}::todolist::create_list`,
+        functionArguments: []
+      };
+      const rawTxn = await client.transaction.build.simple({
+        sender: account.address,
+        data: payload,
+      })
+
+      const publicKey = new Ed25519PublicKey(account.publicKey.toString())
+      const userTransaction = await client.transaction.simulate.simple({
+        signerPublicKey: publicKey,
+        transaction: rawTxn,
+        options: { estimateGasUnitPrice: true, estimateMaxGasAmount: true, estimatePrioritizedGasUnitPrice: true },
+      })
+
+      console.log(userTransaction, 'userTransaction');
+
+      const pendingTxn = await signAndSubmitTransaction({
+        data: payload,
+        options: {
+          maxGasAmount: parseInt(String(Number(userTransaction[0].gas_used) * 1.2)),
+          gasUnitPrice: Number(userTransaction[0].gas_unit_price),
+        },
+      });
+
+      const response = await client.waitForTransaction({
+        transactionHash: pendingTxn.hash,
+      })
+      if (response && response?.success) {
+        console.log({ hash: pendingTxn?.hash, result: response });
+      } else {
+        console.log({ message: response.vm_status || 'Transaction error!' });
+      }
+    } catch (error: any) {
+      console.log(error);
+    }
+  }
 
   const renderSkeletonRow = useMemo(() => (
     <TableRow>
@@ -121,7 +175,7 @@ export function DataTable<TData, TValue>({
           <TableBody>
             {/** Case 1: Not mounted, render skeleton */}
             {!isMounted && renderSkeletonRow}
-            
+
             {/** Case 2: Mounted, not connected, not loading */}
             {isMounted && !connected && !isLoading && (
               <TableRow>
@@ -160,15 +214,17 @@ export function DataTable<TData, TValue>({
                     className="h-24 text-center"
                   >
                     No results.<br />
-                    <Button>Create your list</Button>
+                    <Button onClick={createList}>Create your list</Button>
                   </TableCell>
                 </TableRow>
               )
             )}
 
             {/** Case 5: Mounted, connected, fetch data */}
-            {isMounted && connected && !isFetching && (
-              <FetchListData />
+            {isMounted && connected && (
+              <>
+                <FetchListData />
+              </>
             )}
           </TableBody>
         </Table>
