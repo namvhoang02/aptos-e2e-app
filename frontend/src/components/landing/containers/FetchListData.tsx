@@ -25,22 +25,23 @@ const FetchListData = () => {
   const client = getAptosClient();
 
   const fetchData = useCallback(async () => {
+    if (!account?.address) {
+      console.error('No account address available.');
+      return; // Return early if account address is undefined
+    }
+  
     try {
-      if(!account) {
-        return;
-      }
-      console.log('fetchData');
       const todoListResource = await client.getAccountResource({
-        accountAddress: account.address,
+        accountAddress: account.address, // Now guaranteed to be defined
         resourceType: `${MODULE_ADDRESS}::todolist::TodoList`
       });
-
+  
       // tasks table handle
       const tableHandle = (todoListResource as any).tasks.handle;
-
+  
       // tasks table counter
       const taskCounter = (todoListResource as any).task_counter;
-
+  
       const tasks: Task[] = [];
       let counter = 1;
       while (counter <= taskCounter) {
@@ -59,6 +60,7 @@ const FetchListData = () => {
       dispatch(fetchListFailure(error)); // Dispatch failure action with error
     }
   }, [account, dispatch]);
+  
 
   useEffect(() => {
     if (state.fetchStatus === HTTP_STATUS.LOADING) {

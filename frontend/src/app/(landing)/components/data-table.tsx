@@ -15,7 +15,7 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table";
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -28,11 +28,11 @@ import {
 } from "@/components/ui/table";
 import { WalletButtons } from "@/components/WalletButtons";
 import { Skeleton } from "@/components/ui/skeleton";
-
-import { DataTablePagination } from "./data-table-pagination";
-import { DataTableToolbar } from "./data-table-toolbar";
+import FetchListData from "@/components/landing/containers/FetchListData";
 import { useIsMounted } from "@/lib/hooks/useIsMounted";
 import { HTTP_STATUS } from "@/lib/constants";
+import { DataTablePagination } from "./data-table-pagination";
+import { DataTableToolbar } from "./data-table-toolbar";
 
 interface DataTableProps<TData, TValue> {
   fetchStatus: string | null;
@@ -46,7 +46,7 @@ export function DataTable<TData, TValue>({
   columns,
 }: DataTableProps<TData, TValue>) {
   const isMounted = useIsMounted();
-  const { connected } = useWallet();
+  const { connected, isLoading } = useWallet();
 
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -75,10 +75,12 @@ export function DataTable<TData, TValue>({
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
-  const isFetching =
-    fetchStatus === HTTP_STATUS.LOADING || fetchStatus === null;
+  const isFetching = useMemo(
+    () => fetchStatus === HTTP_STATUS.LOADING || fetchStatus === null,
+    [fetchStatus]
+  );
 
-  const renderSkeletonRow = () => (
+  const renderSkeletonRow = useMemo(() => (
     <TableRow>
       {columns.map((column) => (
         <TableCell key={column.id} className="h-24 text-center">
@@ -97,7 +99,7 @@ export function DataTable<TData, TValue>({
         </TableCell>
       ))}
     </TableRow>
-  );
+  ), [columns]);
 
   return (
     <div className="space-y-4">
@@ -117,8 +119,26 @@ export function DataTable<TData, TValue>({
             ))}
           </TableHeader>
           <TableBody>
-            {!isMounted && renderSkeletonRow()}
-            {isMounted && isFetching && renderSkeletonRow()}
+            {/** Case 1: Not mounted, render skeleton */}
+            {!isMounted && renderSkeletonRow}
+            
+            {/** Case 2: Mounted, not connected, not loading */}
+            {isMounted && !connected && !isLoading && (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  No connected wallet.<br />
+                  <WalletButtons />
+                </TableCell>
+              </TableRow>
+            )}
+
+            {/** Case 3: Mounted, fetching data or wallet is loading */}
+            {isMounted && ((connected && isFetching) || isLoading) && renderSkeletonRow}
+
+            {/** Case 4: Mounted, connected, and has data */}
             {isMounted && connected && !isFetching && (
               table.getRowModel().rows.length ? (
                 table.getRowModel().rows.map((row) => (
@@ -145,16 +165,10 @@ export function DataTable<TData, TValue>({
                 </TableRow>
               )
             )}
-            {isMounted && !connected && !isFetching && (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.<br />
-                  <WalletButtons />
-                </TableCell>
-              </TableRow>
+
+            {/** Case 5: Mounted, connected, fetch data */}
+            {isMounted && connected && !isFetching && (
+              <FetchListData />
             )}
           </TableBody>
         </Table>

@@ -10,7 +10,6 @@ import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { getAptosClient } from "@/lib/aptosClient"
 import { MODULE_ADDRESS } from "@/lib/constants";
 
-import FetchListData from "@/components/landing/containers/FetchListData";
 import { useLandingContext } from "@/components/landing/context/selectors";
 import { Button } from "@/components/ui/button";
 // import { taskSchema } from "./data/schema"
@@ -19,6 +18,8 @@ import { WalletButtons } from "@/components/WalletButtons"
 import { columns } from "./components/columns";
 import { DataTable } from "./components/data-table"
 import { UserNav } from "./components/user-nav"
+import { WalletMenu } from "@/components/WalletMenu";
+import { WalletButton } from "@/components/WalletButton";
 
 // export const metadata: Metadata = {
 //   title: "Tasks",
@@ -42,6 +43,8 @@ import { UserNav } from "./components/user-nav"
 
 export default function Page() {
   const { state } = useLandingContext(); // Get state and dispatch function from context
+
+  console.log(state, 'state');
 
   const tasks = state.list.map((id: string) => state.data[id]);
   
@@ -137,7 +140,6 @@ export default function Page() {
       console.log(error);
     }
   }
-  console.log('page');
 
   return (
     <>
@@ -158,8 +160,9 @@ export default function Page() {
         <Button onClick={createList}>Create list</Button>
         <Button onClick={createTask}>Add task</Button>
         <Button>Complete task</Button>
+        <WalletMenu />
+        <WalletButton />
       </div>
-      <FetchListData />
     </>
   )
 }
