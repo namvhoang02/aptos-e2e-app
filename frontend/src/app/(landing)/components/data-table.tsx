@@ -35,7 +35,7 @@ import { useIsMounted } from "@/lib/hooks/useIsMounted";
 import { HTTP_STATUS } from "@/lib/constants";
 
 interface DataTableProps<TData, TValue> {
-  fetchStatus: string;
+  fetchStatus: string | null;
   data: TData[];
   columns: ColumnDef<TData, TValue>[];
 }
@@ -82,13 +82,13 @@ export function DataTable<TData, TValue>({
     <TableRow>
       {columns.map((column) => (
         <TableCell key={column.id} className="h-24 text-center">
-          {column.accessorKey === "id" && (
+          {"accessorKey" in column && column.accessorKey === "id" && (
             <Skeleton className="h-4 w-[50px]" />
           )}
-          {column.accessorKey === "title" && (
+          {"accessorKey" in column && column.accessorKey === "title" && (
             <Skeleton className="h-4 w-[150px]" />
           )}
-          {column.accessorKey === "status" && (
+          {"accessorKey" in column && column.accessorKey === "status" && (
             <Skeleton className="h-4 w-[100px]" />
           )}
           {column.id === "actions" && (
