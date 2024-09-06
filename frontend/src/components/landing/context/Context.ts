@@ -7,6 +7,7 @@ import { type InitialLandingState } from './types';
 const LandingContext = createContext<{
   state: InitialLandingState;
   dispatch: Dispatch<any>; // Adjust any to your action types if known
+  completeTask?: (id: string) => void;
 }>({
   state: {} as InitialLandingState,
   // eslint-disable-next-line @typescript-eslint/no-empty-function

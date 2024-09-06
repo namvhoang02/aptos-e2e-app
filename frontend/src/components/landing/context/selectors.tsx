@@ -1,12 +1,15 @@
-import * as React from 'react';
+'use client';
+
+import React from 'react';
 
 import LandingContext from './Context';
-import { type InitialLandingState } from './types';
 
-export const useLandingContext = (): {
-  state: InitialLandingState;
-  dispatch: React.Dispatch<any>;
-} => {
+export const useLandingContext = () => {
   const contextValue = React.useContext(LandingContext);
+  if (!contextValue)
+    throw new Error(
+      ['`useLandingContext` must be used within `LandingProvider`.'].join('\n'),
+    );
+
   return contextValue;
 };

@@ -11,6 +11,7 @@ import { Row } from '@tanstack/react-table';
 import { getAptosClient } from '@/lib/aptosClient';
 import { MODULE_ADDRESS } from '@/lib/constants';
 
+import { useLandingContext } from '@/components/landing/context/selectors';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -30,6 +31,8 @@ interface DataTableRowActionsProps<TData> {
 export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
+  const { completeTask } = useLandingContext();
+
   const task = taskSchema.parse(row.original);
   const { account, signAndSubmitTransaction } = useWallet();
 
@@ -76,6 +79,7 @@ export function DataTableRowActions<TData>({
       });
       if (response && response?.success) {
         console.log({ hash: pendingTxn?.hash, result: response });
+        completeTask && completeTask(task.id);
       } else {
         console.log({ message: response.vm_status || 'Transaction error!' });
       }

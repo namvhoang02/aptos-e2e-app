@@ -10,3 +10,5 @@ const createSymbol = (name: string) => `LANDING/${name}`;
 export const FETCH_LIST_REQUEST = createSymbol('FETCH_LIST_REQUEST');
 export const FETCH_LIST_SUCCESS = createSymbol('FETCH_LIST_SUCCESS');
 export const FETCH_LIST_FAILURE = createSymbol('FETCH_LIST_FAILURE');
+
+export const COMPLETE_TASK = createSymbol('UPDATE_TASK');

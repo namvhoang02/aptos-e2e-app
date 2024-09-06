@@ -2,6 +2,7 @@
 import Debug from 'debug';
 import React, { useMemo, useReducer } from 'react';
 
+import { completeTask as completeTaskAction } from './actions';
 import LandingContext from './Context';
 import reducerDefault, { generateInitialState } from './reducer';
 
@@ -20,7 +21,17 @@ const LandingProvider: React.FC<LandingProviderProps> = ({
 
   const [state, dispatch] = useReducer(reducer, generateInitialState());
 
-  const contextValue = useMemo(() => ({ state, dispatch }), [state, dispatch]);
+  const contextValue = useMemo(() => {
+    const completeTask = (taskId: string) => {
+      dispatch(completeTaskAction(taskId));
+    };
+
+    return {
+      state,
+      dispatch,
+      completeTask,
+    };
+  }, [state, dispatch]);
 
   return (
     <LandingContext.Provider value={contextValue}>

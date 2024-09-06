@@ -1,5 +1,6 @@
 // import type { WriteContractErrorType, WaitForTransactionReceiptErrorType } from '@wagmi/core';
 import {
+  COMPLETE_TASK,
   FETCH_LIST_FAILURE,
   // WITHDRAW_CREDITS_REQUEST,
   // WITHDRAW_CREDITS_PREPARING,
@@ -67,3 +68,8 @@ export const fetchListFailure = (error: any) => ({
 //   payload: error,
 //   error: true,
 // });
+
+export const completeTask = (id: string) => ({
+  type: COMPLETE_TASK,
+  payload: id,
+});

@@ -55,6 +55,29 @@ export const handleListFailure = (
   errors: action.payload,
 });
 
+export const handleCompleteTask = (
+  state: InitialLandingState,
+  action: Action<string> | undefined,
+): InitialLandingState => {
+  if (!action) {
+    return state;
+  }
+  const id = action.payload;
+  if (!id) {
+    return state;
+  }
+  return {
+    ...state,
+    data: {
+      ...state.data,
+      [id]: {
+        ...state.data[id],
+        status: 'done',
+      },
+    },
+  };
+};
+
 // export const handleWithdrawCreditsRequest = (
 //   state: InitialLandingState,
 //   action: Action<any>
