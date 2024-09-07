@@ -3,41 +3,25 @@
 
 import { useWallet } from '@aptos-labs/wallet-adapter-react';
 import { FC } from 'react';
+import { ButtonProps } from '@/components/ui/button';
 
-import { useIsMounted } from '@/lib/hooks/useIsMounted';
-
-import { Button, ButtonProps } from '@/components/ui/button';
-import { Dots } from '@/components/ui/dots';
-// import { ConnectButton } from '../../components/connect-button'
+import { WalletAdapterModelDialog } from '../wallet-adapter/WalletAdapterModelDialog';
+import { WalletAdapterButton } from '../wallet-adapter/WalletAdapterButton';
 
 const Connect: FC<ButtonProps> = ({ children, size = 'lg', ...props }) => {
-  const isMounted = useIsMounted();
+  const { connected } = useWallet();
 
-  // const { isDisconnected, isConnecting, isReconnecting } = useAccount()
-  const { connected, isLoading } = useWallet();
-
-  if (!isMounted)
+  // If the component is not mounted, wallet is loading, or not connected,
+  // show the WalletAdapterModelDialog with the WalletAdapterButton
+  if (!connected) {
     return (
-      <Button size={size} {...props}>
-        <div className='h-[1ch]' />
-      </Button>
-    );
-
-  if (isLoading) {
-    return (
-      <Button size={size} disabled {...props}>
-        <Dots>Checking Wallet</Dots>
-      </Button>
+      <WalletAdapterModelDialog>
+        <WalletAdapterButton size={size} {...props} />
+      </WalletAdapterModelDialog>
     );
   }
 
-  if (!connected)
-    return (
-      <Button size={size} {...props}>
-        Connect Wallet
-      </Button>
-    );
-
+  // Once the wallet is connected, render the children
   return <>{children}</>;
 };
 

@@ -10,11 +10,11 @@ import { WalletButton } from '@/components/WalletButton';
 // import { taskSchema } from "./data/schema"
 import { WalletButtons } from '@/components/WalletButtons';
 import { WalletMenu } from '@/components/WalletMenu';
-
+import { Button } from '@/components/ui/button';
+import { Connect } from '@/components/checker/Connect';
 import { columns } from './components/columns';
 import { DataTable } from './components/data-table';
 import { UserNav } from './components/user-nav';
-
 // export const metadata: Metadata = {
 //   title: "Tasks",
 //   description: "A task and issue tracker build using Tanstack Table.",
@@ -34,6 +34,8 @@ import { UserNav } from './components/user-nav';
 // import { client } from "./utils";
 // import { getAccount } from "./account";
 // import { type Task } from "./types";
+import { ConnectButton } from '@/components/user-profile/connect-button';
+import { WalletAdapterModelDialog } from '@/components/wallet-adapter/WalletAdapterModelDialog';
 
 export default function Page() {
   const { state } = useLandingContext(); // Get state and dispatch function from context
@@ -42,7 +44,7 @@ export default function Page() {
 
   return (
     <>
-      <div className='hidden h-full flex-1 flex-col space-y-8 p-8 md:flex'>
+      <div className='h-full flex-1 flex-col space-y-8 p-8'>
         <div className='flex items-center justify-between space-y-2'>
           <div>
             <h2 className='text-2xl font-bold tracking-tight'>Welcome back!</h2>
@@ -53,6 +55,7 @@ export default function Page() {
           <div className='flex items-center space-x-2'>
             <UserNav />
             <WalletButtons />
+            <ConnectButton />
           </div>
         </div>
         <DataTable
@@ -62,6 +65,16 @@ export default function Page() {
         />
         <WalletMenu />
         <WalletButton />
+
+        <WalletAdapterModelDialog>
+          <Button variant='outline' aria-label='Connect wallet'>
+            Connect Wallet
+          </Button>
+        </WalletAdapterModelDialog>
+
+        <Connect>
+          Connected
+        </Connect>
       </div>
     </>
   );
