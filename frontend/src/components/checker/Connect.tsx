@@ -3,10 +3,11 @@
 
 import { useWallet } from '@aptos-labs/wallet-adapter-react';
 import { FC } from 'react';
-import { ButtonProps } from '@/components/ui/button';
 
-import { WalletAdapterModelDialog } from '../wallet-adapter/WalletAdapterModelDialog';
+import { type ButtonProps } from '@/components/ui/button';
+
 import { WalletAdapterButton } from '../wallet-adapter/WalletAdapterButton';
+import { WalletAdapterModelDialog } from '../wallet-adapter/WalletAdapterModelDialog';
 
 const Connect: FC<ButtonProps> = ({ children, size = 'lg', ...props }) => {
   const { connected } = useWallet();

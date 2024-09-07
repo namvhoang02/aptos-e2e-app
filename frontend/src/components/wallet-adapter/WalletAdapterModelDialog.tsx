@@ -1,12 +1,17 @@
 'use client';
 
-import { Loader2 } from 'lucide-react';
 import {
-  WalletName,
-  Wallet,
   useWallet,
+  Wallet,
+  AptosStandardSupportedWallet,
+  WalletName,
 } from '@aptos-labs/wallet-adapter-react';
-import { Button } from '@/components/ui/button';
+import { Loader2 } from 'lucide-react';
+import React, { useCallback, useMemo, useState } from 'react';
+
+import { RECOMMENDED_WALLETS, SITENAME } from '@/lib/constants';
+
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   Dialog,
   DialogContent,
@@ -16,11 +21,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import React, { useMemo, useCallback, useState } from 'react';
-import { RECOMMENDED_WALLETS, SITENAME } from '@/lib/constants';
 
-export function WalletAdapterModelDialog({ children }: { children: React.ReactNode }) {
+export function WalletAdapterModelDialog({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const { wallets, connect, isLoading } = useWallet();
   const [selectedWallet, setSelectedWallet] = useState<Wallet | null>(null);
 
@@ -38,18 +44,18 @@ export function WalletAdapterModelDialog({ children }: { children: React.ReactNo
   const { installedWallets, recommendedWallets, othersWallets } =
     useMemo(() => {
       const installed = wallets?.filter(
-        (wallet: Wallet) => wallet.readyState === 'Installed',
+        (wallet: Wallet | AptosStandardSupportedWallet) => wallet.readyState === 'Installed',
       );
-      const recommended = installed?.filter((wallet: Wallet) =>
+      const recommended = installed?.filter((wallet: Wallet | AptosStandardSupportedWallet) =>
         RECOMMENDED_WALLETS.includes(wallet.name),
       );
       const others = wallets
-        ?.filter((wallet: Wallet) => !RECOMMENDED_WALLETS.includes(wallet.name))
-        ?.filter((wallet: Wallet) => wallet.readyState !== 'Installed');
+        ?.filter((wallet: Wallet | AptosStandardSupportedWallet) => !RECOMMENDED_WALLETS.includes(wallet.name))
+        ?.filter((wallet: Wallet | AptosStandardSupportedWallet) => wallet.readyState !== 'Installed');
 
       return {
         installedWallets: installed?.filter(
-          (wallet: Wallet) => !RECOMMENDED_WALLETS.includes(wallet.name),
+          (wallet: Wallet | AptosStandardSupportedWallet) => !RECOMMENDED_WALLETS.includes(wallet.name),
         ),
         recommendedWallets: recommended,
         othersWallets: others,
@@ -57,7 +63,7 @@ export function WalletAdapterModelDialog({ children }: { children: React.ReactNo
     }, [wallets]);
 
   const onClickWallet = useCallback(
-    (wallet: Wallet) => {
+    (wallet: Wallet | AptosStandardSupportedWallet) => {
       return (e: React.MouseEvent<HTMLDivElement>) => {
         e.preventDefault();
         if (wallet.readyState === 'Installed') {
@@ -72,7 +78,7 @@ export function WalletAdapterModelDialog({ children }: { children: React.ReactNo
   );
 
   // Function to render wallet list item
-  const renderWalletItem = (wallet: Wallet) => (
+  const renderWalletItem = (wallet: Wallet | AptosStandardSupportedWallet) => (
     <div
       className='flex items-center gap-4 cursor-pointer transition-colors hover:bg-muted/50 py-4'
       key={wallet.name}
@@ -93,9 +99,7 @@ export function WalletAdapterModelDialog({ children }: { children: React.ReactNo
 
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        {children}
-      </DialogTrigger>
+      <DialogTrigger asChild>{children}</DialogTrigger>
 
       <DialogContent className='sm:max-w-[425px]'>
         <DialogHeader>

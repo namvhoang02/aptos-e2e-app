@@ -1,14 +1,15 @@
-import { WalletName, useWallet } from '@aptos-labs/wallet-adapter-react';
+import { useWallet, WalletName } from '@aptos-labs/wallet-adapter-react';
 import React from 'react';
+
 // import { WalletIcons } from './connect-view/connect-view'
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Button, type ButtonProps } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { type ButtonProps, Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuGroup,
 } from '@/components/ui/dropdown-menu';
 
 export function ConnectButton(props: ButtonProps) {
