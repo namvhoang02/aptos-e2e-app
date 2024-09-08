@@ -8,6 +8,7 @@
 import { Connect } from '@/components/checker/Connect';
 import { useLandingContext } from '@/components/landing/context/selectors';
 import { UserProfile } from '@/components/user-profile';
+
 // export const metadata: Metadata = {
 //   title: "Tasks",
 //   description: "A task and issue tracker build using Tanstack Table.",
