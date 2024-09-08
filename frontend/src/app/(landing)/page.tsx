@@ -5,35 +5,32 @@
 // import path from "path"
 // import { z } from "zod"
 
+import { Connect } from '@/components/checker/Connect';
 import { useLandingContext } from '@/components/landing/context/selectors';
-import { WalletButton } from '@/components/WalletButton';
-// import { taskSchema } from "./data/schema"
-import { WalletButtons } from '@/components/WalletButtons';
-import { WalletMenu } from '@/components/WalletMenu';
-
-import { columns } from './components/columns';
-import { DataTable } from './components/data-table';
-import { UserNav } from './components/user-nav';
-
+import { Button } from '@/components/ui/button';
+import { UserProfile } from '@/components/user-profile';
 // export const metadata: Metadata = {
 //   title: "Tasks",
 //   description: "A task and issue tracker build using Tanstack Table.",
 // }
-
 // // Simulate a database read for tasks.
 // async function getTasks() {
 //   const data = await fs.readFile(
 //     path.join(process.cwd(), "src/app/(landing)/data/tasks.json")
 //   )
-
 //   const tasks = JSON.parse(data.toString())
-
 //   return z.array(taskSchema).parse(tasks)
 // }
-
 // import { client } from "./utils";
 // import { getAccount } from "./account";
 // import { type Task } from "./types";
+import { WalletAdapterModelDialog } from '@/components/wallet-adapter/WalletAdapterModelDialog';
+
+// import { taskSchema } from "./data/schema"
+// import { WalletButtons } from '@/components/WalletButtons';
+import { columns } from './components/columns';
+import { DataTable } from './components/data-table';
+import { UserNav } from './components/user-nav';
 
 export default function Page() {
   const { state } = useLandingContext(); // Get state and dispatch function from context
@@ -42,7 +39,7 @@ export default function Page() {
 
   return (
     <>
-      <div className='hidden h-full flex-1 flex-col space-y-8 p-8 md:flex'>
+      <div className='h-full flex-1 flex-col space-y-8 p-8'>
         <div className='flex items-center justify-between space-y-2'>
           <div>
             <h2 className='text-2xl font-bold tracking-tight'>Welcome back!</h2>
@@ -52,7 +49,9 @@ export default function Page() {
           </div>
           <div className='flex items-center space-x-2'>
             <UserNav />
-            <WalletButtons />
+            <Connect>
+              <UserProfile />
+            </Connect>
           </div>
         </div>
         <DataTable
@@ -60,8 +59,11 @@ export default function Page() {
           data={tasks}
           columns={columns}
         />
-        <WalletMenu />
-        <WalletButton />
+        <WalletAdapterModelDialog>
+          <Button variant='outline' aria-label='Connect wallet'>
+            Connect Wallet
+          </Button>
+        </WalletAdapterModelDialog>
       </div>
     </>
   );

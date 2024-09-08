@@ -1,5 +1,5 @@
-export const SITENAME = 'Bosscoin';
-export const SITELINK = 'https://bosscoin.vip';
+export const SITENAME = 'Aptos E2E Dapp';
+export const SITELINK = 'https://aptos-e2e-dapp.vercel.app';
 
 // 1. Get projectId at https://cloud.walletconnect.com
 export const projectId = '99fa41e98993063cfe2804d67160c39a';
@@ -44,3 +44,5 @@ export const TRANSACTION_CONFIRMED = [
 
 export const MODULE_ADDRESS =
   '0x7654fd0be5bfa9e6eb080229eab8cbb746022fe3ba5cb302fef2d8985d666966';
+
+export const RECOMMENDED_WALLETS = ['Petra'];
