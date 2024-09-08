@@ -19,7 +19,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 
 export function WalletAdapterModelDialog({
@@ -108,8 +107,7 @@ export function WalletAdapterModelDialog({
 
   return (
     <Dialog>
-      <DialogTrigger asChild>{children}</DialogTrigger>
-
+      {children}
       <DialogContent className='sm:max-w-[425px]'>
         <DialogHeader>
           <DialogTitle>Connect a Wallet</DialogTitle>

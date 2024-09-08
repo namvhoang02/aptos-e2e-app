@@ -2,8 +2,11 @@
 
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { Table } from '@tanstack/react-table';
+import { Plus } from 'lucide-react';
 
+import { Connect } from '@/components/checker/Connect';
 import { Button } from '@/components/ui/button';
+import { DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 
 import { DataTableFacetedFilter } from './data-table-faceted-filter';
@@ -51,7 +54,18 @@ export function DataTableToolbar<TData>({
       </div>
       <div className='flex flex-1 items-center space-x-2'>
         <DataTableViewOptions table={table} />
-        <DataTableNewOptions />
+        <Connect
+          fallback={
+            <DialogTrigger asChild>
+              <Button size='sm' className='ml-auto hidden h-8 lg:flex'>
+                <Plus className='mr-2 h-4 w-4' />
+                New
+              </Button>
+            </DialogTrigger>
+          }
+        >
+          <DataTableNewOptions />
+        </Connect>
       </div>
     </div>
   );

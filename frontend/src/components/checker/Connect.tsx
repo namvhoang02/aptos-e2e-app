@@ -2,22 +2,38 @@
 'use client';
 
 import { useWallet } from '@aptos-labs/wallet-adapter-react';
-import { FC } from 'react';
+import React, { type FC } from 'react';
 
 import { type ButtonProps } from '@/components/ui/button';
+import { DialogTrigger } from '@/components/ui/dialog';
 
 import { WalletAdapterButton } from '../wallet-adapter/WalletAdapterButton';
 import { WalletAdapterModelDialog } from '../wallet-adapter/WalletAdapterModelDialog';
 
-const Connect: FC<ButtonProps> = ({ children, size = 'default', ...props }) => {
+// Define the props to ensure children and fallback are properly typed
+interface ConnectProps extends ButtonProps {
+  fallback?: React.ReactNode;
+}
+
+// Define default props outside the function for better clarity
+const defaultProps: Partial<ConnectProps> = {
+  size: 'default',
+};
+
+const Connect: FC<ConnectProps> = ({ children, fallback, size, ...props }) => {
   const { connected } = useWallet();
 
-  // If the component is not mounted, wallet is loading, or not connected,
-  // show the WalletAdapterModelDialog with the WalletAdapterButton
+  // Render fallback immediately if provided and wallet is not connected
   if (!connected) {
     return (
       <WalletAdapterModelDialog>
-        <WalletAdapterButton size={size} {...props} />
+        {fallback ? (
+          <>{fallback}</>
+        ) : (
+          <DialogTrigger asChild>
+            <WalletAdapterButton size={size} {...props} />
+          </DialogTrigger>
+        )}
       </WalletAdapterModelDialog>
     );
   }
@@ -25,5 +41,8 @@ const Connect: FC<ButtonProps> = ({ children, size = 'default', ...props }) => {
   // Once the wallet is connected, render the children
   return <>{children}</>;
 };
+
+// Apply default props to ensure defaults are respected
+Connect.defaultProps = defaultProps;
 
 export { Connect };

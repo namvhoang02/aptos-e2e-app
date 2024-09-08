@@ -52,7 +52,7 @@ export function UserProfileWrapper({
                       className='cursor-pointer'
                       onClick={(evt) => {
                         evt.preventDefault();
-                        account?.address && setCopied(account.address)
+                        account?.address && setCopied(account.address);
                       }}
                     >
                       <IconButton
