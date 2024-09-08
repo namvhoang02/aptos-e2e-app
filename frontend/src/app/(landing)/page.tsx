@@ -7,7 +7,6 @@
 
 import { Connect } from '@/components/checker/Connect';
 import { useLandingContext } from '@/components/landing/context/selectors';
-import { Button } from '@/components/ui/button';
 import { UserProfile } from '@/components/user-profile';
 // export const metadata: Metadata = {
 //   title: "Tasks",
@@ -24,8 +23,6 @@ import { UserProfile } from '@/components/user-profile';
 // import { client } from "./utils";
 // import { getAccount } from "./account";
 // import { type Task } from "./types";
-import { WalletAdapterModelDialog } from '@/components/wallet-adapter/WalletAdapterModelDialog';
-
 // import { taskSchema } from "./data/schema"
 // import { WalletButtons } from '@/components/WalletButtons';
 import { columns } from './components/columns';
@@ -59,11 +56,6 @@ export default function Page() {
           data={tasks}
           columns={columns}
         />
-        <WalletAdapterModelDialog>
-          <Button variant='outline' aria-label='Connect wallet'>
-            Connect Wallet
-          </Button>
-        </WalletAdapterModelDialog>
       </div>
     </>
   );

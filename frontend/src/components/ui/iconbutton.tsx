@@ -18,6 +18,7 @@ const buttonIconVariants = cva('', {
       sm: 'w-[18px] h-[18px]',
       default: 'w-5 h-5',
       lg: 'w-5 h-5',
+      icon: 'h-10 w-10',
       xl: 'w-5 h-5',
     },
   },
@@ -46,10 +47,11 @@ const iconButtonVariants = cva(
       },
       size: {
         xs: 'min-h-[26px] h-[26px] min-w-[26px] w-[26px] text-xs',
-        sm: 'min-h-[36px] h-[36px] min-w-[36px] w-[36px] text-sm',
-        default: 'min-h-[40px] h-[40px] min-w-[40px] w-[40px] text-sm',
-        lg: 'min-h-[44px] h-[44px] min-w-[44px] w-[44px',
         xl: 'min-h-[52px] h-[52px] min-w-[52px] w-[52px]',
+        default: 'min-h-[40px] h-[40px] min-w-[40px] w-[40px] text-sm',
+        sm: 'min-h-[36px] h-[36px] min-w-[36px] w-[36px] text-sm',
+        lg: 'min-h-[44px] h-[44px] min-w-[44px] w-[44px',
+        icon: 'min-h-[24px] h-[24px] min-w-[24px] w-[24px]', // Add icon size here
       },
     },
     defaultVariants: {
