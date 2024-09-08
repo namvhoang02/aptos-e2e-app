@@ -9,7 +9,7 @@ import { type ButtonProps } from '@/components/ui/button';
 import { WalletAdapterButton } from '../wallet-adapter/WalletAdapterButton';
 import { WalletAdapterModelDialog } from '../wallet-adapter/WalletAdapterModelDialog';
 
-const Connect: FC<ButtonProps> = ({ children, size = 'lg', ...props }) => {
+const Connect: FC<ButtonProps> = ({ children, size = 'default', ...props }) => {
   const { connected } = useWallet();
 
   // If the component is not mounted, wallet is loading, or not connected,

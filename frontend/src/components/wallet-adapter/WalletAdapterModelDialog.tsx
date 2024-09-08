@@ -1,9 +1,9 @@
 'use client';
 
 import {
+  AptosStandardSupportedWallet,
   useWallet,
   Wallet,
-  AptosStandardSupportedWallet,
   WalletName,
 } from '@aptos-labs/wallet-adapter-react';
 import { Loader2 } from 'lucide-react';
@@ -44,18 +44,27 @@ export function WalletAdapterModelDialog({
   const { installedWallets, recommendedWallets, othersWallets } =
     useMemo(() => {
       const installed = wallets?.filter(
-        (wallet: Wallet | AptosStandardSupportedWallet) => wallet.readyState === 'Installed',
+        (wallet: Wallet | AptosStandardSupportedWallet) =>
+          wallet.readyState === 'Installed',
       );
-      const recommended = installed?.filter((wallet: Wallet | AptosStandardSupportedWallet) =>
-        RECOMMENDED_WALLETS.includes(wallet.name),
+      const recommended = installed?.filter(
+        (wallet: Wallet | AptosStandardSupportedWallet) =>
+          RECOMMENDED_WALLETS.includes(wallet.name),
       );
       const others = wallets
-        ?.filter((wallet: Wallet | AptosStandardSupportedWallet) => !RECOMMENDED_WALLETS.includes(wallet.name))
-        ?.filter((wallet: Wallet | AptosStandardSupportedWallet) => wallet.readyState !== 'Installed');
+        ?.filter(
+          (wallet: Wallet | AptosStandardSupportedWallet) =>
+            !RECOMMENDED_WALLETS.includes(wallet.name),
+        )
+        ?.filter(
+          (wallet: Wallet | AptosStandardSupportedWallet) =>
+            wallet.readyState !== 'Installed',
+        );
 
       return {
         installedWallets: installed?.filter(
-          (wallet: Wallet | AptosStandardSupportedWallet) => !RECOMMENDED_WALLETS.includes(wallet.name),
+          (wallet: Wallet | AptosStandardSupportedWallet) =>
+            !RECOMMENDED_WALLETS.includes(wallet.name),
         ),
         recommendedWallets: recommended,
         othersWallets: others,
