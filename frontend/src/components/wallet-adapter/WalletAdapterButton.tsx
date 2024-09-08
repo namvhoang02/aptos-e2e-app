@@ -11,7 +11,7 @@ import { Button, ButtonProps } from '@/components/ui/button';
 
 const WalletAdapterButton: FC<ButtonProps> = ({
   children,
-  size = 'lg',
+  size = 'default',
   ...props
 }) => {
   const isMounted = useIsMounted();
