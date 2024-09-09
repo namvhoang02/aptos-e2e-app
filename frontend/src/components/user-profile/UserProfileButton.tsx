@@ -6,10 +6,10 @@ import React from 'react';
 
 import { useIsMounted } from '@/lib/hooks/useIsMounted';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { type ButtonProps, Button } from '@/components/ui/button';
 import { DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
+import { JazzIcon } from '../icons/JazzIcon';
 import { WalletAdapterButton } from '../wallet-adapter/WalletAdapterButton';
 import { WalletAdapterModelDialog } from '../wallet-adapter/WalletAdapterModelDialog';
 
@@ -49,10 +49,21 @@ export function UserProfileButton({
   return (
     <DropdownMenuTrigger asChild>
       <Button variant='secondary' className='rounded-xl' size={size} {...props}>
-        <Avatar className='mr-2 h-6 w-6'>
+        {account?.address && (
+          <JazzIcon
+            diameter={20}
+            address={account.address}
+            paperStyles={{
+              width: '1.5rem',
+              height: '1.5rem',
+              marginRight: '.5rem',
+            }}
+          />
+        )}
+        {/* <Avatar className='mr-2 h-6 w-6'>
           <AvatarImage alt={wallet?.name} src={wallet?.icon} />
           <AvatarFallback>{wallet?.name?.charAt(0)}</AvatarFallback>
-        </Avatar>
+        </Avatar> */}
         {account?.ansName
           ? account.ansName
           : truncateAddress(account?.address ?? 'Unknown')}
