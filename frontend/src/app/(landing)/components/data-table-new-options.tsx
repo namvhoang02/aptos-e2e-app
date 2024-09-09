@@ -8,7 +8,7 @@ import { useWallet } from '@aptos-labs/wallet-adapter-react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Plus } from 'lucide-react';
 import React, { useState } from 'react';
-import { type SubmitHandler,useForm } from 'react-hook-form';
+import { type SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import { getAptosClient } from '@/lib/aptosClient';
@@ -126,7 +126,7 @@ export function DataTableNewOptions() {
       });
 
       if (response?.success) {
-        addTask({
+        addTask && addTask({
           id: `${state.list.length + 1}`,
           title: data.title,
           status: 'backlog',
