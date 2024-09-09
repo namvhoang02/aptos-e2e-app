@@ -5,12 +5,14 @@ import Debug from 'debug';
 import { createReducer } from '@/lib/middlewares';
 
 import {
+  handleAddTask,
   handleCompleteTask,
   handleListFailure,
   handleListRequest,
   handleListSuccess,
 } from './tasks';
 import {
+  ADD_TASK,
   COMPLETE_TASK,
   FETCH_LIST_FAILURE,
   FETCH_LIST_REQUEST,
@@ -39,6 +41,7 @@ export default createReducer<InitialLandingState>({
     [FETCH_LIST_SUCCESS]: handleListSuccess,
     [FETCH_LIST_FAILURE]: handleListFailure,
     [COMPLETE_TASK]: handleCompleteTask,
+    [ADD_TASK]: handleAddTask,
     // [FETCH_CREDIT_DATA_REQUEST]: handleCreditDataRequest,
     // [FETCH_CREDIT_DATA_SUCCESS]: handleCreditDataSuccess,
     // [FETCH_CREDIT_DATA_FAILURE]: handleCreditDataFailure,

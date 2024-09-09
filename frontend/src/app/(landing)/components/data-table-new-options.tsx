@@ -7,14 +7,15 @@ import {
 import { useWallet } from '@aptos-labs/wallet-adapter-react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Plus } from 'lucide-react';
-import * as React from 'react';
+import React, { useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import { getAptosClient } from '@/lib/aptosClient';
-// import { useToast } from "@/components/ui/use-toast";
+import { getTxUrl } from '@/lib/chain';
 import { MODULE_ADDRESS } from '@/lib/constants';
 
+import { useLandingContext } from '@/components/landing/context/selectors';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -34,25 +35,22 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { useToast } from '@/components/ui/use-toast';
 
 import formSchema from './form-schema';
 
-const defaultValues = {
+// Default values for the form
+const DEFAULT_VALUES = {
   title: '',
 };
 
-// const id = 'login-form';
-
 type FormSchemaType = z.infer<typeof formSchema>;
 
-// interface DataTableNewOptionsProps<TData> {}
-// export function DataTableNewOptions<TData>({
-//   table,
-// }: DataTableNewOptionsProps<TData>) {
 export function DataTableNewOptions() {
-  // const { toast } = useToast();
-
-  const { account, signAndSubmitTransaction } = useWallet();
+  const { toast } = useToast();
+  const { state, addTask } = useLandingContext();
+  const [open, setOpen] = useState(false);
+  const { account, signAndSubmitTransaction, network } = useWallet();
 
   const client = getAptosClient();
 
@@ -60,7 +58,7 @@ export function DataTableNewOptions() {
     resolver: zodResolver(formSchema),
     mode: 'onChange',
     criteriaMode: 'all',
-    defaultValues,
+    defaultValues: DEFAULT_VALUES,
   });
 
   const {
@@ -69,26 +67,36 @@ export function DataTableNewOptions() {
     formState: { isSubmitting, isValid },
   } = form;
 
-  const onSubmit: SubmitHandler<FormSchemaType> = async (
-    data: FormSchemaType,
-  ) => {
+  const handleError = (message: string) => {
+    toast({
+      title: 'Error',
+      description: message,
+      variant: 'destructive',
+    });
+  };
+
+  const onSubmit: SubmitHandler<FormSchemaType> = async (data) => {
     if (!account?.address) {
-      console.error('No account address available.');
-      return; // Return early if account address is undefined
+      handleError('No account address available.');
+      return;
     }
+
     try {
-      // build transaction
+      // Build transaction payload
       const payload: InputGenerateTransactionPayloadData = {
         function: `${MODULE_ADDRESS}::todolist::create_task`,
         functionArguments: [data.title],
       };
+
+      // Build raw transaction
       const rawTxn = await client.transaction.build.simple({
         sender: account.address,
         data: payload,
       });
 
+      // Simulate transaction to estimate gas
       const publicKey = new Ed25519PublicKey(account.publicKey.toString());
-      const userTransaction = await client.transaction.simulate.simple({
+      const [simulationResult] = await client.transaction.simulate.simple({
         signerPublicKey: publicKey,
         transaction: rawTxn,
         options: {
@@ -98,45 +106,52 @@ export function DataTableNewOptions() {
         },
       });
 
+      if (!simulationResult) {
+        handleError('Failed to simulate transaction.');
+        return;
+      }
+
+      // Prepare transaction with gas estimates
       const pendingTxn = await signAndSubmitTransaction({
         data: payload,
         options: {
-          maxGasAmount: parseInt(
-            String(Number(userTransaction[0].gas_used) * 1.2),
-          ),
-          gasUnitPrice: Number(userTransaction[0].gas_unit_price),
+          maxGasAmount: Math.ceil(Number(simulationResult.gas_used) * 1.2),
+          gasUnitPrice: Number(simulationResult.gas_unit_price),
         },
       });
 
+      // Wait for transaction confirmation
       const response = await client.waitForTransaction({
         transactionHash: pendingTxn.hash,
       });
-      if (response && response?.success) {
-        console.log({ hash: pendingTxn?.hash, result: response });
+
+      if (response?.success) {
+        addTask && addTask({
+          id: `${state.list.length + 1}`,
+          title: data.title,
+          status: 'backlog',
+        });
+
+        reset(DEFAULT_VALUES);
+        setOpen(false);
+        toast({
+          title: 'Success',
+          description: (
+            <a target='_blank' href={getTxUrl(pendingTxn.hash, network?.name)}>
+              View on AptosScan
+            </a>
+          ),
+        });
       } else {
-        console.log({ message: response.vm_status || 'Transaction error!' });
+        handleError(`Transaction failed: ${response.vm_status}`);
       }
     } catch (error: any) {
-      console.log(error);
+      handleError(`Transaction error: ${error.message}`);
     }
-
-    // if (error) {
-    //   toast({
-    //     variant: 'destructive',
-    //     description: error.message,
-    //   });
-    // } else {
-    //   reset(defaultValues);
-    //   toast({
-    //     title: "You're Almost There!",
-    //     description:
-    //       'Just one more step! Please check your email to log in and start using our service.',
-    //   });
-    // }
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button size='sm' className='ml-auto hidden h-8 lg:flex'>
           <Plus className='mr-2 h-4 w-4' />
@@ -178,7 +193,7 @@ export function DataTableNewOptions() {
                 type='submit'
                 disabled={isSubmitting || !isValid}
               >
-                Save changes
+                {isSubmitting ? 'Submitting...' : 'Save changes'}
               </Button>
             </DialogFooter>
           </form>
