@@ -8,11 +8,13 @@ import { useWallet } from '@aptos-labs/wallet-adapter-react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Plus } from 'lucide-react';
 import React, { useState } from 'react';
-import { useForm, type SubmitHandler } from 'react-hook-form';
+import { type SubmitHandler,useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import { getAptosClient } from '@/lib/aptosClient';
+import { getTxUrl } from '@/lib/chain';
 import { MODULE_ADDRESS } from '@/lib/constants';
+
 import { useLandingContext } from '@/components/landing/context/selectors';
 import { Button } from '@/components/ui/button';
 import {
@@ -33,6 +35,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { useToast } from '@/components/ui/use-toast';
 
 import formSchema from './form-schema';
 
@@ -44,9 +47,11 @@ const DEFAULT_VALUES = {
 type FormSchemaType = z.infer<typeof formSchema>;
 
 export function DataTableNewOptions() {
+  const { toast } = useToast();
   const { state, addTask } = useLandingContext();
   const [open, setOpen] = useState(false);
-  const { account, signAndSubmitTransaction } = useWallet();
+  const { account, signAndSubmitTransaction, network } = useWallet();
+
   const client = getAptosClient();
 
   const form = useForm<FormSchemaType>({
@@ -62,9 +67,17 @@ export function DataTableNewOptions() {
     formState: { isSubmitting, isValid },
   } = form;
 
+  const handleError = (message: string) => {
+    toast({
+      title: 'Error',
+      description: message,
+      variant: 'destructive',
+    });
+  };
+
   const onSubmit: SubmitHandler<FormSchemaType> = async (data) => {
     if (!account?.address) {
-      console.error('No account address available.');
+      handleError('No account address available.');
       return;
     }
 
@@ -94,7 +107,7 @@ export function DataTableNewOptions() {
       });
 
       if (!simulationResult) {
-        console.error('Simulation failed');
+        handleError('Failed to simulate transaction.');
         return;
       }
 
@@ -113,31 +126,39 @@ export function DataTableNewOptions() {
       });
 
       if (response?.success) {
-        console.log({ hash: pendingTxn.hash, result: response });
-        addTask && addTask({
+        addTask({
           id: `${state.list.length + 1}`,
           title: data.title,
           status: 'backlog',
         });
-        setOpen(false);
+
         reset(DEFAULT_VALUES);
+        setOpen(false);
+        toast({
+          title: 'Success',
+          description: (
+            <a target='_blank' href={getTxUrl(pendingTxn.hash, network?.name)}>
+              View on AptosScan
+            </a>
+          ),
+        });
       } else {
-        console.error(`Transaction failed: ${response.vm_status}`);
+        handleError(`Transaction failed: ${response.vm_status}`);
       }
     } catch (error: any) {
-      console.error('Transaction error:', error);
+      handleError(`Transaction error: ${error.message}`);
     }
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="sm" className="ml-auto hidden h-8 lg:flex">
-          <Plus className="mr-2 h-4 w-4" />
+        <Button size='sm' className='ml-auto hidden h-8 lg:flex'>
+          <Plus className='mr-2 h-4 w-4' />
           New
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className='sm:max-w-[425px]'>
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmit)}>
             <DialogHeader>
@@ -149,27 +170,27 @@ export function DataTableNewOptions() {
 
             <FormField
               control={form.control}
-              name="title"
+              name='title'
               render={({ field }) => (
-                <FormItem className="my-3">
+                <FormItem className='my-3'>
                   <FormLabel>Title</FormLabel>
                   <FormControl>
                     <Input
-                      type="text"
-                      placeholder="Title"
+                      type='text'
+                      placeholder='Title'
                       disabled={isSubmitting}
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage className="text-red-600 dark:text-red-500" />
+                  <FormMessage className='text-red-600 dark:text-red-500' />
                 </FormItem>
               )}
             />
 
             <DialogFooter>
               <Button
-                className="py-3 px-4 inline-flex justify-center items-center"
-                type="submit"
+                className='py-3 px-4 inline-flex justify-center items-center'
+                type='submit'
                 disabled={isSubmitting || !isValid}
               >
                 {isSubmitting ? 'Submitting...' : 'Save changes'}

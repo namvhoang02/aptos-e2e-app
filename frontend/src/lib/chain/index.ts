@@ -9,3 +9,7 @@ export function getAccountUrl(
   }
   return `https://aptoscan.com/account/${accountAddress}?network=${network}`;
 }
+
+export function getTxUrl(txHash: string, network = 'mainnet'): string {
+  return `https://aptoscan.com/transaction/${txHash}?network=${network}`;
+}
