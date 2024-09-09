@@ -15,6 +15,7 @@ import { getAptosClient } from '@/lib/aptosClient';
 // import { useToast } from "@/components/ui/use-toast";
 import { MODULE_ADDRESS } from '@/lib/constants';
 
+import { useLandingContext } from '@/components/landing/context/selectors';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -51,6 +52,7 @@ type FormSchemaType = z.infer<typeof formSchema>;
 // }: DataTableNewOptionsProps<TData>) {
 export function DataTableNewOptions() {
   // const { toast } = useToast();
+  const { state, addTask } = useLandingContext(); // Get state and dispatch function from context
 
   const { account, signAndSubmitTransaction } = useWallet();
 
@@ -113,6 +115,12 @@ export function DataTableNewOptions() {
       });
       if (response && response?.success) {
         console.log({ hash: pendingTxn?.hash, result: response });
+
+        addTask({
+          id: `${state.list.length + 1}`,
+          title: data.title,
+          status: 'backlog',
+        });
       } else {
         console.log({ message: response.vm_status || 'Transaction error!' });
       }

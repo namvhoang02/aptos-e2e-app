@@ -41,9 +41,6 @@ export const handleListSuccess = (
     list,
     data,
   };
-  return {
-    ...state,
-  };
 };
 
 export const handleListFailure = (
@@ -286,3 +283,32 @@ export const handleCompleteTask = (
 //     },
 //   };
 // };
+
+export const handleAddTask = (
+  state: InitialLandingState,
+  action: Action<Task> | undefined,
+): InitialLandingState => {
+  if (!action || !action.payload) {
+    return state;
+  }
+
+  const task = action.payload;
+
+  // If the task already exists, keep the state unchanged
+  if (state.data[task.id]) {
+    return state;
+  }
+
+  // Add the new task to the list and data
+  const newList = [...state.list, task.id];
+  const newData = {
+    ...state.data,
+    [task.id]: task,
+  };
+
+  return {
+    ...state,
+    list: newList,
+    data: newData,
+  };
+};

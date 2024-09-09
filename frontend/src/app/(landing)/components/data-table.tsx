@@ -118,8 +118,6 @@ export function DataTable<TData, TValue>({
         },
       });
 
-      console.log(userTransaction, 'userTransaction');
-
       const pendingTxn = await signAndSubmitTransaction({
         data: payload,
         options: {
