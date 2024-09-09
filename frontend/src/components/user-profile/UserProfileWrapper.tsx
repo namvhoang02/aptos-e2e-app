@@ -1,11 +1,13 @@
 'use client';
 
+import { truncateAddress } from '@aptos-labs/wallet-adapter-react';
 import { useWallet } from '@aptos-labs/wallet-adapter-react';
 import { Copy, ExternalLink, LogOut } from 'lucide-react';
 import React from 'react';
 
 import { getAccountUrl } from '@/lib/chain';
 
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ClipboardController } from '@/components/ui/clipboard-controller';
 import {
   DropdownMenu,
@@ -28,20 +30,21 @@ export function UserProfileWrapper({
 }: {
   children: React.ReactNode;
 }) {
-  const { account, disconnect, network } = useWallet();
-
-  console.log(network, 'network');
+  const { account, disconnect, wallet, network } = useWallet();
 
   return (
     <DropdownMenu>
       {children}
       <DropdownMenuContent className='w-80 max-w-sm' align='end' side='bottom'>
         <DropdownMenuLabel className='font-normal'>
-          <div className='flex flex-col space-y-1'>
-            <p className='text-sm font-medium leading-none'>shadcn</p>
-            <p className='text-xs leading-none text-muted-foreground'>
-              m@example.com
-            </p>
+          <div className='inline-flex items-center justify-center'>
+            <Avatar className='mr-2 h-6 w-6'>
+              <AvatarImage alt={wallet?.name} src={wallet?.icon} />
+              <AvatarFallback>{wallet?.name?.charAt(0)}</AvatarFallback>
+            </Avatar>
+            {account?.ansName
+              ? account.ansName
+              : truncateAddress(account?.address ?? 'Unknown')}
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />

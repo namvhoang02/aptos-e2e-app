@@ -28,7 +28,6 @@ import { UserProfile } from '@/components/user-profile';
 // import { WalletButtons } from '@/components/WalletButtons';
 import { columns } from './components/columns';
 import { DataTable } from './components/data-table';
-import { UserNav } from './components/user-nav';
 
 export default function Page() {
   const { state } = useLandingContext(); // Get state and dispatch function from context
@@ -46,7 +45,6 @@ export default function Page() {
             </p>
           </div>
           <div className='flex items-center space-x-2'>
-            <UserNav />
             <Connect>
               <UserProfile />
             </Connect>
