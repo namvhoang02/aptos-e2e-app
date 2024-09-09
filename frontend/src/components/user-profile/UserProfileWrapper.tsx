@@ -79,7 +79,10 @@ export function UserProfileWrapper({
             <TooltipTrigger asChild>
               <DropdownMenuItem className='cursor-pointer'>
                 <LinkExternal
-                  href={getAccountUrl(account.address!, network?.name)}
+                  href={
+                    account?.address &&
+                    getAccountUrl(account.address, network?.name)
+                  }
                 >
                   <IconButton
                     variant='ghost'
