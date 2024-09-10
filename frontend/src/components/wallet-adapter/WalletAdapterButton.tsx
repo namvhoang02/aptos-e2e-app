@@ -1,17 +1,20 @@
-// https://raw.githubusercontent.com/sushiswap/sushiswap/7b80a1ad19c129eb964b9e699c025f0f61eb8b2d/apps/web/src/lib/wagmi/systems/Checker/Connect.tsx
 'use client';
 
 import { useWallet } from '@aptos-labs/wallet-adapter-react';
 import { Loader2, Wallet } from 'lucide-react';
-import { FC } from 'react';
+import { FC, ReactNode } from 'react';
 
 import { useIsMounted } from '@/lib/hooks/useIsMounted';
-
 import { Button, ButtonProps } from '@/components/ui/button';
 
-const WalletAdapterButton: FC<ButtonProps> = ({
+interface WalletAdapterButtonProps extends ButtonProps {
+  icon?: ReactNode;
+}
+
+const WalletAdapterButton: FC<WalletAdapterButtonProps> = ({
   children,
   size = 'default',
+  icon = <Wallet className='mr-2 h-4 w-4' />,
   ...props
 }) => {
   const isMounted = useIsMounted();
@@ -34,7 +37,7 @@ const WalletAdapterButton: FC<ButtonProps> = ({
         </>
       ) : (
         <>
-          <Wallet className='mr-2 h-4 w-4' />
+          {icon}
           <span className='hidden sm:inline'>Connect Wallet</span>
           <span className='inline sm:hidden'>Connect</span>
         </>

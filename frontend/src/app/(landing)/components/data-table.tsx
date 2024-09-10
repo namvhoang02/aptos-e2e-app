@@ -37,10 +37,12 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { WalletButtons } from '@/components/WalletButtons';
 
 import { DataTablePagination } from './data-table-pagination';
 import { DataTableToolbar } from './data-table-toolbar';
+import { WalletAdapterModelDialog } from '@/components/wallet-adapter/WalletAdapterModelDialog';
+import { WalletAdapterButton } from '@/components/wallet-adapter/WalletAdapterButton';
+import { DialogTrigger } from '@/components/ui/dialog';
 
 interface DataTableProps<TData, TValue> {
   fetchStatus: string | null;
@@ -198,7 +200,11 @@ export function DataTable<TData, TValue>({
                 >
                   No connected wallet.
                   <br />
-                  <WalletButtons />
+                  <WalletAdapterModelDialog>
+                      <DialogTrigger asChild>
+                        <WalletAdapterButton icon />
+                      </DialogTrigger>
+                  </WalletAdapterModelDialog>
                 </TableCell>
               </TableRow>
             )}

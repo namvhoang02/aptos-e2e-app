@@ -25,7 +25,6 @@ import { UserProfile } from '@/components/user-profile';
 // import { getAccount } from "./account";
 // import { type Task } from "./types";
 // import { taskSchema } from "./data/schema"
-// import { WalletButtons } from '@/components/WalletButtons';
 import { columns } from './components/columns';
 import { DataTable } from './components/data-table';
 
