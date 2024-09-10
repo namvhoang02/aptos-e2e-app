@@ -2,6 +2,7 @@
 import {
   ADD_TASK,
   COMPLETE_TASK,
+  DELETE_TASK,
   FETCH_LIST_FAILURE,
   // WITHDRAW_CREDITS_REQUEST,
   // WITHDRAW_CREDITS_PREPARING,
@@ -77,5 +78,10 @@ export const completeTask = (id: string) => ({
 
 export const addTask = (data: Task) => ({
   type: ADD_TASK,
+  payload: data,
+});
+
+export const deleteTask = (data: Task) => ({
+  type: DELETE_TASK,
   payload: data,
 });

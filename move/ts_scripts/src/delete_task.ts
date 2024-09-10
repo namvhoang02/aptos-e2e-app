@@ -1,4 +1,4 @@
-// npx ts-node ./ts/complete_task.ts
+// npx ts-node ./src/delete_task.ts
 import { client } from "./utils";
 import { MODULE_ADDRESS } from "./config";
 import { getAccount } from "./account";
@@ -10,24 +10,26 @@ async function main() {
     // get tasks from chain
     let tasks: Task[] = await getTaskTableHandle();
 
-    // find task to complete
-    const taskToComplete = tasks.find((task) => task.completed === false);
+    // find task to delete (for this example, we delete the first task)
+    const taskToDelete = tasks[0]; // Change this to your desired task selection logic
 
-    if(!taskToComplete) {
-      console.log('No task to complete');
+    if (!taskToDelete) {
+      console.log('No task to delete');
       return;
     }
-    // complete task
+    
+    // delete task
     const account = await getAccount();
 
     // build transaction
     const transaction = await client.transaction.build.simple({
       sender: account.accountAddress,
       data: {
-        function:`${MODULE_ADDRESS}::todolist::complete_task`,
-        functionArguments:[taskToComplete?.task_id]
+        function: `${MODULE_ADDRESS}::todolist::delete_task`,
+        functionArguments: [taskToDelete?.task_id],
       },
     });
+
     // using sign and submit separately
     const senderAuthenticator = client.transaction.sign({ signer: account, transaction });
     const committedTransaction = await client.transaction.submit.simple({ transaction, senderAuthenticator });

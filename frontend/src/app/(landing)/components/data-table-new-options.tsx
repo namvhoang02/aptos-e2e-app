@@ -126,11 +126,12 @@ export function DataTableNewOptions() {
       });
 
       if (response?.success) {
-        addTask && addTask({
-          id: `${state.list.length + 1}`,
-          title: data.title,
-          status: 'backlog',
-        });
+        addTask &&
+          addTask({
+            id: `${state.list.length + 1}`,
+            title: data.title,
+            status: 'backlog',
+          });
 
         reset(DEFAULT_VALUES);
         setOpen(false);

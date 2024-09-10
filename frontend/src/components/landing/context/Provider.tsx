@@ -5,6 +5,8 @@ import React, { useMemo, useReducer } from 'react';
 import {
   addTask as addTaskAction,
   completeTask as completeTaskAction,
+  deleteTask as deleteTaskAction,
+  fetchListSuccess as fetchListSuccessAction,
 } from './actions';
 import LandingContext from './Context';
 import reducerDefault, { generateInitialState } from './reducer';
@@ -34,11 +36,21 @@ const LandingProvider: React.FC<LandingProviderProps> = ({
       dispatch(addTaskAction(data));
     };
 
+    const fetchListSuccess = (data: Task[]) => {
+      dispatch(fetchListSuccessAction(data));
+    };
+
+    const deleteTask = (data: Task) => {
+      dispatch(deleteTaskAction(data));
+    };
+
     return {
       state,
       dispatch,
       completeTask,
       addTask,
+      fetchListSuccess,
+      deleteTask,
     };
   }, [state, dispatch]);
 

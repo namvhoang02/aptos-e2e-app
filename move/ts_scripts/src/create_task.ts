@@ -1,4 +1,4 @@
-// npx ts-node ./ts/create_task.ts
+// npx ts-node ./src/create_task.ts
 import { client } from "./utils";
 import { MODULE_ADDRESS } from "./config";
 import { getAccount } from "./account";

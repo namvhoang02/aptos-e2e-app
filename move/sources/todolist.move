@@ -8,9 +8,17 @@ module todolist_addr::todolist {
   use std::string;
 
   // Errors
-  const E_NOT_INITIALIZED: u64 = 1;
-  const ETASK_DOESNT_EXIST: u64 = 2;
-  const ETASK_IS_COMPLETED: u64 = 3;
+  /// User has not created a todo list
+  const E_TODO_LIST_DOES_NOT_EXIST: u64 = 1;
+
+  /// Each user can only have one todo list
+  const E_EACH_USER_CAN_ONLY_HAVE_ONE_TODO_LIST: u64 = 2;
+
+  /// Task with this ID does not exist
+  const E_TODO_DOES_NOT_EXIST: u64 = 3;
+
+  /// Task has already been completed
+  const E_TODO_ALREADY_COMPLETED: u64 = 4;
 
   struct TodoList has key {
     tasks: Table<u64, Task>,
@@ -25,7 +33,12 @@ module todolist_addr::todolist {
     completed: bool,
   }
 
-  public entry fun create_list(account: &signer){
+  public entry fun create_list(account: &signer) {
+    let sender_address = signer::address_of(account);
+    assert!(
+      !exists<TodoList>(sender_address),
+      E_EACH_USER_CAN_ONLY_HAVE_ONE_TODO_LIST
+    );
     let tasks_holder = TodoList {
       tasks: table::new(),
       set_task_event: account::new_event_handle<Task>(account),
@@ -36,27 +49,19 @@ module todolist_addr::todolist {
   }
 
   public entry fun create_task(account: &signer, content: String) acquires TodoList {
-    // gets the signer address
     let signer_address = signer::address_of(account);
-    // assert signer has created a list
-    assert!(exists<TodoList>(signer_address), E_NOT_INITIALIZED);
+    assert!(exists<TodoList>(signer_address), E_TODO_LIST_DOES_NOT_EXIST);
 
-    // gets the TodoList resource
-    let todo_list = borrow_global_mut<TodoList>(signer_address);
-    // increment task counter
-    let counter = todo_list.task_counter + 1;
-    // creates a new Task
+    let user_todo_list = borrow_global_mut<TodoList>(signer_address);
+    let counter = user_todo_list.task_counter + 1;
     let new_task = Task {
       task_id: counter,
       address: signer_address,
       content,
       completed: false
     };
-    // adds the new task into the tasks table
-    table::upsert(&mut todo_list.tasks, counter, new_task);
-    // sets the task counter to be the incremented counter
-    todo_list.task_counter = counter;
-    // fires a new task created event
+    table::upsert(&mut user_todo_list.tasks, counter, new_task);
+    user_todo_list.task_counter = counter;
     event::emit_event<Task>(
       &mut borrow_global_mut<TodoList>(signer_address).set_task_event,
       new_task,
@@ -64,21 +69,78 @@ module todolist_addr::todolist {
   }
 
   public entry fun complete_task(account: &signer, task_id: u64) acquires TodoList {
-    // gets the signer address
     let signer_address = signer::address_of(account);
-    // assert signer has created a list
-    assert!(exists<TodoList>(signer_address), E_NOT_INITIALIZED);
-    // gets the TodoList resource
+    assert!(exists<TodoList>(signer_address), E_TODO_LIST_DOES_NOT_EXIST);
+
     let todo_list = borrow_global_mut<TodoList>(signer_address);
-    // assert task exists
-    assert!(table::contains(&todo_list.tasks, task_id), ETASK_DOESNT_EXIST);
-    // gets the task matched the task_id
+    assert!(table::contains(&todo_list.tasks, task_id), E_TODO_DOES_NOT_EXIST);
     let task_record = table::borrow_mut(&mut todo_list.tasks, task_id);
-    // assert task is not completed
-    assert!(task_record.completed == false, ETASK_IS_COMPLETED);
-    // update task as completed
+    assert!(task_record.completed == false, E_TODO_ALREADY_COMPLETED);
     task_record.completed = true;
   }
+
+  public entry fun delete_task(account: &signer, task_id: u64) acquires TodoList {
+    let signer_address = signer::address_of(account);
+    assert!(exists<TodoList>(signer_address), E_TODO_LIST_DOES_NOT_EXIST);
+
+    let todo_list = borrow_global_mut<TodoList>(signer_address);
+    assert!(table::contains(&todo_list.tasks, task_id), E_TODO_DOES_NOT_EXIST);
+
+    // Remove the task from the table
+    table::remove(&mut todo_list.tasks, task_id);
+  }
+
+  // ======================== Read Functions ========================
+  #[view]
+  public fun has_todo_list(sender: address): bool {
+    exists<TodoList>(sender)
+  }
+
+  #[view]
+  public fun get_todo(sender: address, task_id: u64): (String, bool) acquires TodoList {
+    assert_user_has_todo_list(sender);
+    let todo_list = borrow_global<TodoList>(sender);
+    assert!(table::contains(&todo_list.tasks, task_id), E_TODO_DOES_NOT_EXIST);
+    let task_record = table::borrow(&todo_list.tasks, task_id);
+    (task_record.content, task_record.completed)
+  }
+
+  // ======================== Helper Functions ========================
+  fun assert_user_has_todo_list(user_addr: address) {
+    assert!(
+      exists<TodoList>(user_addr),
+      E_TODO_LIST_DOES_NOT_EXIST
+    );
+  }
+
+  // #[test(admin = @0x123)]
+  // public entry fun test_flow(admin: signer) acquires TodoList {
+  //   account::create_account_for_test(signer::address_of(&admin));
+  //   create_list(&admin);
+
+  //   create_task(&admin, string::utf8(b"New Task"));
+  //   let task_count = event::counter(&borrow_global<TodoList>(signer::address_of(&admin)).set_task_event);
+  //   assert!(task_count == 1, 4);
+  //   let todo_list = borrow_global<TodoList>(signer::address_of(&admin));
+  //   assert!(todo_list.task_counter == 1, 5);
+  //   let task_record = table::borrow(&todo_list.tasks, todo_list.task_counter);
+  //   assert!(task_record.task_id == 1, 6);
+  //   assert!(task_record.completed == false, 7);
+  //   assert!(task_record.content == string::utf8(b"New Task"), 8);
+  //   assert!(task_record.address == signer::address_of(&admin), 9);
+
+  //   complete_task(&admin, 1);
+  //   let todo_list = borrow_global<TodoList>(signer::address_of(&admin));
+  //   let task_record = table::borrow(&todo_list.tasks, 1);
+  //   assert!(task_record.task_id == 1, 10);
+  //   assert!(task_record.completed == true, 11);
+  //   assert!(task_record.content == string::utf8(b"New Task"), 12);
+  //   assert!(task_record.address == signer::address_of(&admin), 13);
+
+  //   // Deleting the task
+  //   delete_task(&admin, 1);
+  //   assert!(!table::contains(&todo_list.tasks, 1), 14);
+  // }
 
   #[test(admin = @0x123)]
   public entry fun test_flow(admin: signer) acquires TodoList {
@@ -110,11 +172,38 @@ module todolist_addr::todolist {
   }
 
   #[test(admin = @0x123)]
-  #[expected_failure(abort_code = E_NOT_INITIALIZED)]
+  #[expected_failure(abort_code = E_TODO_LIST_DOES_NOT_EXIST)]
   public entry fun account_can_not_update_task(admin: signer) acquires TodoList {
     // creates an admin @todolist_addr account for test
     account::create_account_for_test(signer::address_of(&admin));
     // account can not toggle task as no list was created
     complete_task(&admin, 2);
+  }
+
+  #[test(admin = @0x132)]
+  public entry fun test_complete_task(admin: signer) acquires TodoList {
+    // creates an admin @todolist_addr account for test
+    account::create_account_for_test(signer::address_of(&admin));
+    // initialize contract with admin account
+    create_list(&admin);
+    create_task(&admin, string::utf8(b"Test Task"));
+    
+    complete_task(&admin, 1);
+    
+    let todo_list = borrow_global<TodoList>(signer::address_of(&admin));
+    let task_record = table::borrow(&todo_list.tasks, 1);
+    assert!(task_record.completed == true, 11);
+  }
+
+  #[test(admin = @0x123)]
+  public entry fun test_delete_task(admin: signer) acquires TodoList {
+    account::create_account_for_test(signer::address_of(&admin));
+    create_list(&admin);
+    create_task(&admin, string::utf8(b"Test Task"));
+
+    delete_task(&admin, 1);
+    
+    let todo_list = borrow_global<TodoList>(signer::address_of(&admin));
+    assert!(!table::contains(&todo_list.tasks, 1), 15);
   }
 }

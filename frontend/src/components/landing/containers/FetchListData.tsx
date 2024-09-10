@@ -7,11 +7,7 @@ import { getAptosClient } from '@/lib/aptosClient';
 import { HTTP_STATUS } from '@/lib/constants';
 import { MODULE_ADDRESS } from '@/lib/constants';
 
-import {
-  fetchListFailure,
-  fetchListRequest,
-  fetchListSuccess,
-} from '../context/actions';
+import { fetchListFailure, fetchListRequest } from '../context/actions';
 import { useLandingContext } from '../context/selectors';
 import { type Task } from '../context/types';
 
@@ -24,7 +20,7 @@ function convertTask(task: any): Task {
 }
 
 const FetchListData = () => {
-  const { state, dispatch } = useLandingContext(); // Get state and dispatch function from context
+  const { state, dispatch, fetchListSuccess } = useLandingContext(); // Get state and dispatch function from context
   const { account } = useWallet();
   const client = getAptosClient();
 
@@ -49,19 +45,24 @@ const FetchListData = () => {
       const tasks: Task[] = [];
       let counter = 1;
       while (counter <= taskCounter) {
-        const tableItem = {
-          key_type: 'u64',
-          value_type: `${MODULE_ADDRESS}::todolist::Task`,
-          key: `${counter}`,
-        };
-        const task = await client.getTableItem<Task>({
-          handle: tableHandle,
-          data: tableItem,
-        });
-        tasks.push(convertTask(task));
-        counter++;
+        try {
+          const tableItem = {
+            key_type: 'u64',
+            value_type: `${MODULE_ADDRESS}::todolist::Task`,
+            key: `${counter}`,
+          };
+          const task = await client.getTableItem<Task>({
+            handle: tableHandle,
+            data: tableItem,
+          });
+          tasks.push(convertTask(task));
+        } catch (error: any) {
+          console.error(error.message);
+        } finally {
+          counter += 1;
+        }
       }
-      dispatch(fetchListSuccess(tasks));
+      fetchListSuccess && fetchListSuccess(tasks);
     } catch (error) {
       console.log(error, 'error');
       dispatch(fetchListFailure(error)); // Dispatch failure action with error

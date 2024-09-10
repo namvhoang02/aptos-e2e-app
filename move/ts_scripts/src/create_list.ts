@@ -1,4 +1,4 @@
-// npx ts-node ./ts/create_list.ts
+// npx ts-node ./src/create_list.ts
 import { client } from "./utils";
 import { MODULE_ADDRESS } from "./config";
 import { getAccount } from "./account";

@@ -70,6 +70,8 @@ export function DataTable<TData, TValue>({
       rowSelection,
       columnFilters,
     },
+    // https://stackoverflow.com/questions/70752474/react-table-removes-filters-when-updating-data
+    autoResetAll: false,
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
