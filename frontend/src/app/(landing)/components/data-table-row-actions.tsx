@@ -3,6 +3,7 @@
 import {
   Ed25519PublicKey,
   InputGenerateTransactionPayloadData,
+  AptosClient,
 } from '@aptos-labs/ts-sdk';
 import { useWallet } from '@aptos-labs/wallet-adapter-react';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
@@ -32,29 +33,48 @@ export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
   const { completeTask } = useLandingContext();
-
   const task = taskSchema.parse(row.original);
   const { account, signAndSubmitTransaction } = useWallet();
-
   const client = getAptosClient();
 
   const handleCompleteTask = async () => {
+    if (!account) {
+      console.error('No account connected.');
+      return;
+    }
+
     try {
-      if (!account) {
-        return;
+      console.log('Completing task:', task);
+
+      const transactionHash = await buildAndSubmitTransaction(account, task.id, client);
+      if (transactionHash) {
+        completeTask && completeTask(task.id);
+        console.log(`Task completed with transaction hash: ${transactionHash}`);
       }
-      // build transaction
+    } catch (error: any) {
+      console.error('Transaction failed:', error.message);
+    }
+  };
+
+  // Function to handle transaction building and submission
+  const buildAndSubmitTransaction = async (
+    account: { address: string; publicKey: Uint8Array },
+    taskId: bigint,
+    client: AptosClient
+  ) => {
+    try {
       const payload: InputGenerateTransactionPayloadData = {
         function: `${MODULE_ADDRESS}::todolist::complete_task`,
-        functionArguments: [BigInt(task.id)],
+        functionArguments: [taskId],
       };
+
       const rawTxn = await client.transaction.build.simple({
         sender: account.address,
         data: payload,
       });
 
       const publicKey = new Ed25519PublicKey(account.publicKey.toString());
-      const userTransaction = await client.transaction.simulate.simple({
+      const [userTransaction] = await client.transaction.simulate.simple({
         signerPublicKey: publicKey,
         transaction: rawTxn,
         options: {
@@ -64,27 +84,31 @@ export function DataTableRowActions<TData>({
         },
       });
 
+      const maxGasAmount = parseInt(
+        (Number(userTransaction.gas_used) * 1.2).toString(),
+      );
+      const gasUnitPrice = Number(userTransaction.gas_unit_price);
+
       const pendingTxn = await signAndSubmitTransaction({
         data: payload,
         options: {
-          maxGasAmount: parseInt(
-            String(Number(userTransaction[0].gas_used) * 1.2),
-          ),
-          gasUnitPrice: Number(userTransaction[0].gas_unit_price),
+          maxGasAmount,
+          gasUnitPrice,
         },
       });
 
       const response = await client.waitForTransaction({
         transactionHash: pendingTxn.hash,
       });
-      if (response && response?.success) {
-        console.log({ hash: pendingTxn?.hash, result: response });
-        completeTask && completeTask(task.id);
+
+      if (response?.success) {
+        return pendingTxn.hash;
       } else {
-        console.log({ message: response.vm_status || 'Transaction error!' });
+        throw new Error(response.vm_status || 'Transaction failed.');
       }
     } catch (error: any) {
-      console.log(error);
+      console.error('Error during transaction:', error.message);
+      throw error;
     }
   };
 

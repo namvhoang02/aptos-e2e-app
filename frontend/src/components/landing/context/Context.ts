@@ -9,6 +9,7 @@ const LandingContext = createContext<{
   dispatch: Dispatch<any>; // Adjust any to your action types if known
   completeTask?: (id: string) => void;
   addTask?: (data: Task) => void;
+  fetchListSuccess?: (data: Task[]) => void;
 }>({
   state: {} as InitialLandingState,
   // eslint-disable-next-line @typescript-eslint/no-empty-function

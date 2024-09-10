@@ -10,8 +10,6 @@ async function main() {
     // get tasks from chain
     let tasks: Task[] = await getTaskTableHandle();
 
-    console.log(tasks);
-
     // find task to delete (for this example, we delete the first task)
     const taskToDelete = tasks[0]; // Change this to your desired task selection logic
 
