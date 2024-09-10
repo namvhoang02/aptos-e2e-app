@@ -19,14 +19,19 @@ export async function getTaskTableHandle() {
   let tasks: Task[] = [];
   let counter = 1;
   while (counter <= taskCounter) {
-    const tableItem = {
-      key_type: "u64",
-      value_type: `${MODULE_ADDRESS}::todolist::Task`,
-      key: `${counter}`,
-    };
-    const task = await client.getTableItem<Task>({ handle: tableHandle, data: tableItem });
-    tasks.push(task);
-    counter++;
+    try {
+      const tableItem = {
+        key_type: "u64",
+        value_type: `${MODULE_ADDRESS}::todolist::Task`,
+        key: `${counter}`,
+      };
+      const task = await client.getTableItem<Task>({ handle: tableHandle, data: tableItem });
+      tasks.push(task);
+    } catch (error: any) {
+      console.error (error.message);
+    } finally {
+      counter++;
+    }
   }
 
   return tasks;
