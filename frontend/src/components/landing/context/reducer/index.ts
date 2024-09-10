@@ -7,6 +7,7 @@ import { createReducer } from '@/lib/middlewares';
 import {
   handleAddTask,
   handleCompleteTask,
+  handleDeleteTask,
   handleListFailure,
   handleListRequest,
   handleListSuccess,
@@ -14,6 +15,7 @@ import {
 import {
   ADD_TASK,
   COMPLETE_TASK,
+  DELETE_TASK,
   FETCH_LIST_FAILURE,
   FETCH_LIST_REQUEST,
   FETCH_LIST_SUCCESS,
@@ -42,6 +44,7 @@ export default createReducer<InitialLandingState>({
     [FETCH_LIST_FAILURE]: handleListFailure,
     [COMPLETE_TASK]: handleCompleteTask,
     [ADD_TASK]: handleAddTask,
+    [DELETE_TASK]: handleDeleteTask,
     // [FETCH_CREDIT_DATA_REQUEST]: handleCreditDataRequest,
     // [FETCH_CREDIT_DATA_SUCCESS]: handleCreditDataSuccess,
     // [FETCH_CREDIT_DATA_FAILURE]: handleCreditDataFailure,

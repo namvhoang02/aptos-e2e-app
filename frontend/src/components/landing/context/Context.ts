@@ -10,6 +10,7 @@ const LandingContext = createContext<{
   completeTask?: (id: string) => void;
   addTask?: (data: Task) => void;
   fetchListSuccess?: (data: Task[]) => void;
+  deleteTask?: (data: Task) => void;
 }>({
   state: {} as InitialLandingState,
   // eslint-disable-next-line @typescript-eslint/no-empty-function

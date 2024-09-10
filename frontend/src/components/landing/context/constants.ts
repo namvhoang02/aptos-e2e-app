@@ -14,3 +14,5 @@ export const FETCH_LIST_FAILURE = createSymbol('FETCH_LIST_FAILURE');
 export const COMPLETE_TASK = createSymbol('UPDATE_TASK');
 
 export const ADD_TASK = createSymbol('ADD_TASK');
+
+export const DELETE_TASK = createSymbol('DELETE_TASK');

@@ -312,3 +312,27 @@ export const handleAddTask = (
     data: newData,
   };
 };
+
+export const handleDeleteTask = (
+  state: InitialLandingState,
+  action: Action<Task> | undefined,
+): InitialLandingState => {
+  if (!action?.payload || !state.list.includes(action.payload.id)) {
+    return state;
+  }
+
+  const taskId = action.payload.id;
+
+  // Create an updated list of task IDs, filtering out the deleted task's ID
+  const updatedTaskList = state.list.filter((id) => id !== taskId);
+
+  // Create a new copy of the task data without the deleted task
+  const updatedTaskData = { ...state.data };
+  delete updatedTaskData[taskId];
+
+  return {
+    ...state,
+    list: updatedTaskList,
+    data: updatedTaskData,
+  };
+};

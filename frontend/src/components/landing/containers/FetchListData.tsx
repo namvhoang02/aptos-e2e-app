@@ -7,10 +7,7 @@ import { getAptosClient } from '@/lib/aptosClient';
 import { HTTP_STATUS } from '@/lib/constants';
 import { MODULE_ADDRESS } from '@/lib/constants';
 
-import {
-  fetchListFailure,
-  fetchListRequest,
-} from '../context/actions';
+import { fetchListFailure, fetchListRequest } from '../context/actions';
 import { useLandingContext } from '../context/selectors';
 import { type Task } from '../context/types';
 
@@ -50,11 +47,14 @@ const FetchListData = () => {
       while (counter <= taskCounter) {
         try {
           const tableItem = {
-            key_type: "u64",
+            key_type: 'u64',
             value_type: `${MODULE_ADDRESS}::todolist::Task`,
             key: `${counter}`,
           };
-          const task = await client.getTableItem<Task>({ handle: tableHandle, data: tableItem });
+          const task = await client.getTableItem<Task>({
+            handle: tableHandle,
+            data: tableItem,
+          });
           tasks.push(convertTask(task));
         } catch (error: any) {
           console.error(error.message);
