@@ -5,10 +5,9 @@ import {
   Ed25519PublicKey,
   InputGenerateTransactionPayloadData,
 } from '@aptos-labs/ts-sdk';
-import { useWallet, AccountInfo } from '@aptos-labs/wallet-adapter-react';
-
-import { Ellipsis } from 'lucide-react';
+import { AccountInfo,useWallet } from '@aptos-labs/wallet-adapter-react';
 import { Row } from '@tanstack/react-table';
+import { Ellipsis } from 'lucide-react';
 
 import { getAptosClient } from '@/lib/aptosClient';
 import { MODULE_ADDRESS } from '@/lib/constants';
