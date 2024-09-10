@@ -8,9 +8,17 @@ module todolist_addr::todolist {
   use std::string;
 
   // Errors
-  const E_NOT_INITIALIZED: u64 = 1;
-  const ETASK_DOESNT_EXIST: u64 = 2;
-  const ETASK_IS_COMPLETED: u64 = 3;
+  /// Todo list does not exist
+  const E_TODO_LIST_DOSE_NOT_EXIST: u64 = 1;
+
+  /// Try to create another todo list, but each user can only have one todo list
+  const E_EACH_USER_CAN_ONLY_HAVE_ONE_TODO_LIST: u64 = 2;
+
+  /// Todo does not exist
+  const E_TODO_DOSE_NOT_EXIST: u64 = 3;
+    
+  /// Todo is already completed
+  const E_TODO_ALREADY_COMPLETED: u64 = 4;
 
   struct TodoList has key {
     tasks: Table<u64, Task>,
@@ -26,6 +34,11 @@ module todolist_addr::todolist {
   }
 
   public entry fun create_list(account: &signer){
+    let sender_address = signer::address_of(account);
+    assert!(
+      !exists<TodoList>(sender_address),
+      E_EACH_USER_CAN_ONLY_HAVE_ONE_TODO_LIST
+    );
     let tasks_holder = TodoList {
       tasks: table::new(),
       set_task_event: account::new_event_handle<Task>(account),
@@ -39,7 +52,7 @@ module todolist_addr::todolist {
     // gets the signer address
     let signer_address = signer::address_of(account);
     // assert signer has created a list
-    assert!(exists<TodoList>(signer_address), E_NOT_INITIALIZED);
+    assert!(exists<TodoList>(signer_address), E_TODO_LIST_DOSE_NOT_EXIST);
 
     // gets the TodoList resource
     let todo_list = borrow_global_mut<TodoList>(signer_address);
@@ -67,15 +80,15 @@ module todolist_addr::todolist {
     // gets the signer address
     let signer_address = signer::address_of(account);
     // assert signer has created a list
-    assert!(exists<TodoList>(signer_address), E_NOT_INITIALIZED);
+    assert!(exists<TodoList>(signer_address), E_TODO_LIST_DOSE_NOT_EXIST);
     // gets the TodoList resource
     let todo_list = borrow_global_mut<TodoList>(signer_address);
     // assert task exists
-    assert!(table::contains(&todo_list.tasks, task_id), ETASK_DOESNT_EXIST);
+    assert!(table::contains(&todo_list.tasks, task_id), E_TODO_DOSE_NOT_EXIST);
     // gets the task matched the task_id
     let task_record = table::borrow_mut(&mut todo_list.tasks, task_id);
     // assert task is not completed
-    assert!(task_record.completed == false, ETASK_IS_COMPLETED);
+    assert!(task_record.completed == false, E_TODO_ALREADY_COMPLETED);
     // update task as completed
     task_record.completed = true;
   }
@@ -110,7 +123,7 @@ module todolist_addr::todolist {
   }
 
   #[test(admin = @0x123)]
-  #[expected_failure(abort_code = E_NOT_INITIALIZED)]
+  #[expected_failure(abort_code = E_TODO_LIST_DOSE_NOT_EXIST)]
   public entry fun account_can_not_update_task(admin: signer) acquires TodoList {
     // creates an admin @todolist_addr account for test
     account::create_account_for_test(signer::address_of(&admin));
