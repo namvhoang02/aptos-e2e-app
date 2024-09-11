@@ -1,11 +1,12 @@
 import { HTTP_STATUS } from '@/lib/constants';
+
 import {
+  handleAddTask,
+  handleCompleteTask,
+  handleDeleteTask,
+  handleListFailure,
   handleListRequest,
   handleListSuccess,
-  handleListFailure,
-  handleCompleteTask,
-  handleAddTask,
-  handleDeleteTask,
 } from './tasks';
 import { type InitialLandingState, type Task } from '../types';
 
@@ -132,7 +133,11 @@ describe('components/landing/context/reducer/tasks', () => {
     });
 
     it('should return the original state if task does not exist', () => {
-      const task: Task = { id: '2', name: 'Nonexistent Task', completed: false };
+      const task: Task = {
+        id: '2',
+        name: 'Nonexistent Task',
+        completed: false,
+      };
       const action = { payload: task };
       const newState = handleDeleteTask(initialState, action);
 

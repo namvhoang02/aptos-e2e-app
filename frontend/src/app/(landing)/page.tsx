@@ -7,6 +7,9 @@
 
 import { Connect } from '@/components/checker/Connect';
 import { useLandingContext } from '@/components/landing/context/selectors';
+import { NetworkButton } from '@/components/network/NetworkButton';
+import { NetworkSelector } from '@/components/network/NetworkSelector';
+import { PopoverTrigger } from '@/components/ui/popover';
 import { UserProfile } from '@/components/user-profile';
 
 // export const metadata: Metadata = {
@@ -25,7 +28,6 @@ import { UserProfile } from '@/components/user-profile';
 // import { getAccount } from "./account";
 // import { type Task } from "./types";
 // import { taskSchema } from "./data/schema"
-// import { WalletButtons } from '@/components/WalletButtons';
 import { columns } from './components/columns';
 import { DataTable } from './components/data-table';
 
@@ -45,6 +47,12 @@ export default function Page() {
             </p>
           </div>
           <div className='flex items-center space-x-2'>
+            <NetworkSelector>
+              <PopoverTrigger>
+                {/* <NetworkButton testId='network-selector' /> */}
+                <NetworkButton />
+              </PopoverTrigger>
+            </NetworkSelector>
             <Connect>
               <UserProfile />
             </Connect>

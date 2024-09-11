@@ -46,7 +46,7 @@ export function WalletAdapterModelDialog({
         (wallet: Wallet | AptosStandardSupportedWallet) =>
           wallet.readyState === 'Installed',
       );
-      const recommended = installed?.filter(
+      const recommended = wallets?.filter(
         (wallet: Wallet | AptosStandardSupportedWallet) =>
           RECOMMENDED_WALLETS.includes(wallet.name),
       );

@@ -5,7 +5,7 @@ import {
   Ed25519PublicKey,
   InputGenerateTransactionPayloadData,
 } from '@aptos-labs/ts-sdk';
-import { AccountInfo,useWallet } from '@aptos-labs/wallet-adapter-react';
+import { AccountInfo, useWallet } from '@aptos-labs/wallet-adapter-react';
 import { Row } from '@tanstack/react-table';
 import { Ellipsis } from 'lucide-react';
 
@@ -18,8 +18,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
+  // DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
@@ -149,15 +148,15 @@ export function DataTableRowActions<TData>({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align='end' className='w-[160px]'>
-        <DropdownMenuItem>Edit</DropdownMenuItem>
-        <DropdownMenuItem>Make a copy</DropdownMenuItem>
+        {/* <DropdownMenuItem>Edit</DropdownMenuItem> */}
+        {/* <DropdownMenuItem>Make a copy</DropdownMenuItem> */}
         <DropdownMenuItem onSelect={handleCompleteTask}>
           Complete task
         </DropdownMenuItem>
-        <DropdownMenuSeparator />
+        {/* <DropdownMenuSeparator /> */}
         <DropdownMenuItem onSelect={handleDeleteTask}>
           Delete task
-          <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
+          {/* <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut> */}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
