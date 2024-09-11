@@ -1,18 +1,18 @@
 import {
+  addTask,
+  completeTask,
+  deleteTask,
+  fetchListFailure,
   fetchListRequest,
   fetchListSuccess,
-  fetchListFailure,
-  completeTask,
-  addTask,
-  deleteTask,
 } from './actions';
 import {
+  ADD_TASK,
+  COMPLETE_TASK,
+  DELETE_TASK,
+  FETCH_LIST_FAILURE,
   FETCH_LIST_REQUEST,
   FETCH_LIST_SUCCESS,
-  FETCH_LIST_FAILURE,
-  COMPLETE_TASK,
-  ADD_TASK,
-  DELETE_TASK,
 } from './constants';
 import { type Task } from './types';
 
@@ -81,7 +81,11 @@ describe('components/landing/context/actions', () => {
 
   describe('deleteTask', () => {
     it('should create an action to delete a task', () => {
-      const task: Task = { id: '123', name: 'Task to delete', completed: false };
+      const task: Task = {
+        id: '123',
+        name: 'Task to delete',
+        completed: false,
+      };
       const expectedAction = {
         type: DELETE_TASK,
         payload: task,
