@@ -5,6 +5,7 @@ import { Loader2, Wallet } from 'lucide-react';
 import { FC, ReactNode } from 'react';
 
 import { useIsMounted } from '@/lib/hooks/useIsMounted';
+
 import { Button, ButtonProps } from '@/components/ui/button';
 
 interface WalletAdapterButtonProps extends ButtonProps {
@@ -12,7 +13,6 @@ interface WalletAdapterButtonProps extends ButtonProps {
 }
 
 const WalletAdapterButton: FC<WalletAdapterButtonProps> = ({
-  children,
   size = 'default',
   icon = <Wallet className='mr-2 h-4 w-4' />,
   ...props

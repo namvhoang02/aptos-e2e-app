@@ -1,6 +1,6 @@
 import * as matchers from 'jest-extended';
 import { TextDecoder, TextEncoder } from 'util';
-import '@testing-library/jest-dom'
+import '@testing-library/jest-dom';
 import 'jest-localstorage-mock';
 
 expect.extend(matchers);

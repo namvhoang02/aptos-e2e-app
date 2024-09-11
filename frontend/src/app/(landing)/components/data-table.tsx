@@ -26,8 +26,10 @@ import { MODULE_ADDRESS } from '@/lib/constants';
 import { HTTP_STATUS } from '@/lib/constants';
 import { useIsMounted } from '@/lib/hooks/useIsMounted';
 
+import { Networks as NetworksChecker } from '@/components/checker/Networks';
 import FetchListData from '@/components/landing/containers/FetchListData';
 import { Button } from '@/components/ui/button';
+import { DialogTrigger } from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
   Table,
@@ -37,12 +39,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { WalletAdapterButton } from '@/components/wallet-adapter/WalletAdapterButton';
+import { WalletAdapterModelDialog } from '@/components/wallet-adapter/WalletAdapterModelDialog';
 
 import { DataTablePagination } from './data-table-pagination';
 import { DataTableToolbar } from './data-table-toolbar';
-import { WalletAdapterModelDialog } from '@/components/wallet-adapter/WalletAdapterModelDialog';
-import { WalletAdapterButton } from '@/components/wallet-adapter/WalletAdapterButton';
-import { DialogTrigger } from '@/components/ui/dialog';
 
 interface DataTableProps<TData, TValue> {
   fetchStatus: string | null;
@@ -201,9 +202,9 @@ export function DataTable<TData, TValue>({
                   No connected wallet.
                   <br />
                   <WalletAdapterModelDialog>
-                      <DialogTrigger asChild>
-                        <WalletAdapterButton icon />
-                      </DialogTrigger>
+                    <DialogTrigger asChild>
+                      <WalletAdapterButton icon />
+                    </DialogTrigger>
                   </WalletAdapterModelDialog>
                 </TableCell>
               </TableRow>
@@ -242,7 +243,9 @@ export function DataTable<TData, TValue>({
                   >
                     No results.
                     <br />
-                    <Button onClick={createList}>Create your list</Button>
+                    <NetworksChecker>
+                      <Button onClick={createList}>Create your list</Button>
+                    </NetworksChecker>
                   </TableCell>
                 </TableRow>
               ))}

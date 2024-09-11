@@ -5,7 +5,7 @@ import {
   Ed25519PublicKey,
   InputGenerateTransactionPayloadData,
 } from '@aptos-labs/ts-sdk';
-import { AccountInfo,useWallet } from '@aptos-labs/wallet-adapter-react';
+import { AccountInfo, useWallet } from '@aptos-labs/wallet-adapter-react';
 import { Row } from '@tanstack/react-table';
 import { Ellipsis } from 'lucide-react';
 
@@ -18,7 +18,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   // DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
