@@ -5,8 +5,6 @@
 // import path from "path"
 // import { z } from "zod"
 
-import '@/config';
-
 import { Connect } from '@/components/checker/Connect';
 import { useLandingContext } from '@/components/landing/context/selectors';
 import { NetworkButton } from '@/components/network/NetworkButton';
