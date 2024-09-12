@@ -37,6 +37,7 @@ import {
 import { WalletAdapterButton } from '@/components/wallet-adapter/WalletAdapterButton';
 import { WalletAdapterModelDialog } from '@/components/wallet-adapter/WalletAdapterModelDialog';
 
+import { AddNewTaskModel } from './AddNewTaskModel';
 import { DataTablePagination } from './data-table-pagination';
 import { DataTableToolbar } from './data-table-toolbar';
 import { useCreateTodoList } from './useCreateTodoList';
@@ -99,9 +100,11 @@ export function DataTable<TData, TValue>({
   const renderSkeletonRow = () => (
     <TableRow key='skeleton-row-key'>
       {columns.map((column) => (
-        <TableCell key={column.id} className='h-24 text-center'>
+        <TableCell key={column.id} className='text-center'>
           {'accessorKey' in column && column.accessorKey === 'id' && (
-            <Skeleton className='h-4 w-[50px]' />
+            <div className='min-h-[300px] text-center flex flex-col items-center justify-center'>
+              <Skeleton className='h-4 w-[50px]' />
+            </div>
           )}
           {'accessorKey' in column && column.accessorKey === 'title' && (
             <Skeleton className='h-4 w-[150px]' />
@@ -119,7 +122,7 @@ export function DataTable<TData, TValue>({
   const renderNoWalletConnected = () => (
     <TableRow>
       <TableCell colSpan={columns.length}>
-        <div className='min-h-[400px] text-center flex flex-col items-center justify-center'>
+        <div className='min-h-[300px] text-center flex flex-col items-center justify-center'>
           <p className='text-lg font-semibold'>Wallet not connected</p>
           <p className='text-sm text-muted-foreground'>
             Please connect your wallet to proceed.
@@ -138,14 +141,19 @@ export function DataTable<TData, TValue>({
   const renderNoData = () => (
     <TableRow>
       <TableCell colSpan={columns.length}>
-        <div className='min-h-[400px] text-center flex flex-col items-center justify-center'>
+        <div className='min-h-[300px] text-center flex flex-col items-center justify-center'>
           <p className='text-lg font-semibold'>No data found</p>
           <p className='text-sm text-muted-foreground'>
             It looks like there's nothing here yet.
           </p>
-          <Button className='mt-2'>
-            <Plus className='mr-2 h-4 w-4' /> Create new task
-          </Button>
+
+          <AddNewTaskModel>
+            <DialogTrigger asChild>
+              <Button className='mt-2'>
+                <Plus className='mr-2 h-4 w-4' /> Create new task
+              </Button>
+            </DialogTrigger>
+          </AddNewTaskModel>
         </div>
       </TableCell>
     </TableRow>
@@ -155,7 +163,7 @@ export function DataTable<TData, TValue>({
   const renderCreateListPrompt = () => (
     <TableRow>
       <TableCell colSpan={columns.length}>
-        <div className='min-h-[400px] text-center flex flex-col items-center justify-center'>
+        <div className='min-h-[300px] text-center flex flex-col items-center justify-center'>
           <p className='text-lg font-semibold'>No list available</p>
           <p className='text-sm text-muted-foreground'>
             Create a new list to get started.
