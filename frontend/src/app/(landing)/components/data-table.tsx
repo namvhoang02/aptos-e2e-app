@@ -18,7 +18,6 @@ import {
 import { Plus } from 'lucide-react';
 import React, { useMemo, useState } from 'react';
 
-import { getAptosClient } from '@/lib/aptosClient';
 import { HTTP_STATUS } from '@/lib/constants';
 import { useIsMounted } from '@/lib/hooks/useIsMounted';
 
@@ -94,10 +93,9 @@ export function DataTable<TData, TValue>({
     [fetchStatus],
   );
 
-  const { account, signAndSubmitTransaction } = useWallet();
-  const client = getAptosClient();
   const { createList, loading } = useCreateTodoList(updateHasTodoList);
 
+  // Renders skeleton row while data is being fetched or components are mounting
   const renderSkeletonRow = () => (
     <TableRow key='skeleton-row-key'>
       {columns.map((column) => (
@@ -117,27 +115,35 @@ export function DataTable<TData, TValue>({
     </TableRow>
   );
 
+  // Renders the message when no wallet is connected
   const renderNoWalletConnected = () => (
     <TableRow>
-      <TableCell colSpan={columns.length} className='h-24 text-center'>
-        No connected wallet.
-        <br />
-        <WalletAdapterModelDialog>
-          <DialogTrigger asChild>
-            <WalletAdapterButton icon />
-          </DialogTrigger>
-        </WalletAdapterModelDialog>
+      <TableCell colSpan={columns.length}>
+        <div className='min-h-[400px] text-center flex flex-col items-center justify-center'>
+          <p className='text-lg font-semibold'>Wallet not connected</p>
+          <p className='text-sm text-muted-foreground'>
+            Please connect your wallet to proceed.
+          </p>
+          <WalletAdapterModelDialog>
+            <DialogTrigger asChild>
+              <WalletAdapterButton icon className='mt-2' />
+            </DialogTrigger>
+          </WalletAdapterModelDialog>
+        </div>
       </TableCell>
     </TableRow>
   );
 
+  // Renders the message when there is no data
   const renderNoData = () => (
     <TableRow>
       <TableCell colSpan={columns.length}>
-        <div className='min-h-[400px] text-center justify-center items-center flex-col flex'>
-          <p className='text-lg font-semibold'>No data</p>
-          <p className='text-sm text-muted-foreground'>No data here yet.</p>
-          <Button variant='secondary' className='mt-2'>
+        <div className='min-h-[400px] text-center flex flex-col items-center justify-center'>
+          <p className='text-lg font-semibold'>No data found</p>
+          <p className='text-sm text-muted-foreground'>
+            It looks like there's nothing here yet.
+          </p>
+          <Button className='mt-2'>
             <Plus className='mr-2 h-4 w-4' /> Create new task
           </Button>
         </div>
@@ -145,20 +151,26 @@ export function DataTable<TData, TValue>({
     </TableRow>
   );
 
+  // Renders prompt to create a to-do list when none exists
   const renderCreateListPrompt = () => (
     <TableRow>
-      <TableCell colSpan={columns.length} className='h-24 text-center'>
-        No results.
-        <br />
-        <NetworksChecker>
-          <Button onClick={createList} disabled={loading}>
-            {loading ? 'Creating...' : 'Create your list'}
-          </Button>
-        </NetworksChecker>
+      <TableCell colSpan={columns.length}>
+        <div className='min-h-[400px] text-center flex flex-col items-center justify-center'>
+          <p className='text-lg font-semibold'>No list available</p>
+          <p className='text-sm text-muted-foreground'>
+            Create a new list to get started.
+          </p>
+          <NetworksChecker>
+            <Button onClick={createList} disabled={loading} className='mt-2'>
+              {loading ? 'Creating...' : 'Create your list'}
+            </Button>
+          </NetworksChecker>
+        </div>
       </TableCell>
     </TableRow>
   );
 
+  // Main table content renderer with conditional display logic
   const renderTableContent = () => {
     if (!isMounted) return renderSkeletonRow();
     if (!connected && !isLoading) return renderNoWalletConnected();
