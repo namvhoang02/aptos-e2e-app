@@ -11,16 +11,21 @@ import { WalletAdapterButton } from '../wallet-adapter/WalletAdapterButton';
 import { WalletAdapterModelDialog } from '../wallet-adapter/WalletAdapterModelDialog';
 
 // Define the props to ensure children and fallback are properly typed
-interface ConnectProps extends ButtonProps {
+export interface ConnectProps extends ButtonProps {
   fallback?: React.ReactNode;
 }
 
-// Define default props outside the function for better clarity
-const defaultProps: Partial<ConnectProps> = {
-  size: 'default',
-};
+// // Define default props outside the function for better clarity
+// const defaultProps: Partial<ConnectProps> = {
+//   size: 'default',
+// };
 
-const Connect: FC<ConnectProps> = ({ children, fallback, size, ...props }) => {
+const Connect: FC<ConnectProps> = ({
+  children,
+  fallback,
+  size = 'default',
+  ...props
+}) => {
   const { connected } = useWallet();
 
   // Render fallback immediately if provided and wallet is not connected
@@ -42,7 +47,7 @@ const Connect: FC<ConnectProps> = ({ children, fallback, size, ...props }) => {
   return <>{children}</>;
 };
 
-// Apply default props to ensure defaults are respected
-Connect.defaultProps = defaultProps;
+// // Apply default props to ensure defaults are respected
+// Connect.defaultProps = defaultProps;
 
 export { Connect };

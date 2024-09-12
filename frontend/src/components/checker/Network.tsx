@@ -40,11 +40,7 @@ const NetworkChecker: FC<NetworkCheckerProps> = ({
   if (network?.name !== chainId) {
     return hoverCardContent ? (
       <HoverCard openDelay={0} closeDelay={0}>
-        <Button
-          size={size}
-          onClick={handleNetworkSwitch}
-          {...rest}
-        >
+        <Button size={size} onClick={handleNetworkSwitch} {...rest}>
           Switch to {chainName[chainId] ?? 'this network'}
           <HoverCardTrigger>
             <Info className='ml-2 h-4 w-4' />
@@ -55,11 +51,7 @@ const NetworkChecker: FC<NetworkCheckerProps> = ({
         </HoverCardContent>
       </HoverCard>
     ) : (
-      <Button
-        size={size}
-        onClick={handleNetworkSwitch}
-        {...rest}
-      >
+      <Button size={size} onClick={handleNetworkSwitch} {...rest}>
         Switch to {chainName[chainId] ?? 'this network'}
       </Button>
     );

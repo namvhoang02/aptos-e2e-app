@@ -12,6 +12,7 @@ import {
   // WITHDRAW_CREDITS_ERROR,
   FETCH_LIST_REQUEST,
   FETCH_LIST_SUCCESS,
+  UPDATE_HAS_TODO_LIST,
 } from './constants';
 import { type Task } from './types';
 
@@ -84,4 +85,9 @@ export const addTask = (data: Task) => ({
 export const deleteTask = (data: Task) => ({
   type: DELETE_TASK,
   payload: data,
+});
+
+export const updateHasTodoList = (hasTodoList: boolean) => ({
+  type: UPDATE_HAS_TODO_LIST,
+  payload: hasTodoList,
 });
