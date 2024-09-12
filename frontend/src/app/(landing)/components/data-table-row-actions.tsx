@@ -9,7 +9,6 @@ import { AccountInfo, useWallet } from '@aptos-labs/wallet-adapter-react';
 import { Row } from '@tanstack/react-table';
 import { Ellipsis } from 'lucide-react';
 
-import { getAptosClient } from '@/lib/aptosClient';
 import { MODULE_ADDRESS } from '@/lib/constants';
 
 import { useLandingContext } from '@/components/landing/context/selectors';
@@ -21,6 +20,8 @@ import {
   // DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+
+import { useClient } from '@/providers/ClientProvider';
 
 import { taskSchema } from '../data/schema';
 
@@ -34,11 +35,16 @@ export function DataTableRowActions<TData>({
   const { completeTask, deleteTask } = useLandingContext();
   const task = taskSchema.parse(row.original);
   const { account, signAndSubmitTransaction } = useWallet();
-  const client = getAptosClient();
+  const { client } = useClient();
 
   const handleCompleteTask = async () => {
-    if (!account) {
-      console.error('No account connected.');
+    if (!client) {
+      console.error('Client not initialized. Please ensure the client is correctly configured.');
+      return;
+    }
+  
+    if (!account?.address) {
+      console.error('No account address found. Please connect your wallet and try again.');
       return;
     }
 
@@ -59,8 +65,13 @@ export function DataTableRowActions<TData>({
   };
 
   const handleDeleteTask = async () => {
-    if (!account) {
-      console.error('No account connected.');
+    if (!client) {
+      console.error('Client not initialized. Please ensure the client is correctly configured.');
+      return;
+    }
+  
+    if (!account?.address) {
+      console.error('No account address found. Please connect your wallet and try again.');
       return;
     }
 

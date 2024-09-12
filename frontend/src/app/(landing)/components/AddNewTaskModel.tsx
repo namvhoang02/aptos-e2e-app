@@ -10,7 +10,6 @@ import React, { useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import { getAptosClient } from '@/lib/aptosClient';
 import { getTxUrl } from '@/lib/chain';
 import { MODULE_ADDRESS } from '@/lib/constants';
 
@@ -35,6 +34,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 
+import { useClient } from '@/providers/ClientProvider';
+
 import formSchema from './form-schema';
 
 // Default values for the form
@@ -50,7 +51,7 @@ export function AddNewTaskModel({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   const { account, signAndSubmitTransaction, network } = useWallet();
 
-  const client = getAptosClient();
+  const { client } = useClient();
 
   const form = useForm<FormSchemaType>({
     resolver: zodResolver(formSchema),
@@ -74,24 +75,29 @@ export function AddNewTaskModel({ children }: { children: React.ReactNode }) {
   };
 
   const onSubmit: SubmitHandler<FormSchemaType> = async (data) => {
-    if (!account?.address) {
-      handleError('No account address available.');
+    if (!client) {
+      handleError('Client not initialized. Please ensure the client is correctly configured.');
       return;
     }
-
+  
+    if (!account?.address) {
+      handleError('No account address found. Please connect your wallet and try again.');
+      return;
+    }
+  
     try {
       // Build transaction payload
       const payload: InputGenerateTransactionPayloadData = {
         function: `${MODULE_ADDRESS}::todolist::create_task`,
         functionArguments: [data.title],
       };
-
+  
       // Build raw transaction
       const rawTxn = await client.transaction.build.simple({
         sender: account.address,
         data: payload,
       });
-
+  
       // Simulate transaction to estimate gas
       const publicKey = new Ed25519PublicKey(account.publicKey.toString());
       const [simulationResult] = await client.transaction.simulate.simple({
@@ -103,12 +109,12 @@ export function AddNewTaskModel({ children }: { children: React.ReactNode }) {
           estimatePrioritizedGasUnitPrice: true,
         },
       });
-
+  
       if (!simulationResult) {
-        handleError('Failed to simulate transaction.');
+        handleError('Transaction simulation failed. Please check your network or try again later.');
         return;
       }
-
+  
       // Prepare transaction with gas estimates
       const pendingTxn = await signAndSubmitTransaction({
         data: payload,
@@ -117,12 +123,12 @@ export function AddNewTaskModel({ children }: { children: React.ReactNode }) {
           gasUnitPrice: Number(simulationResult.gas_unit_price),
         },
       });
-
+  
       // Wait for transaction confirmation
       const response = await client.waitForTransaction({
         transactionHash: pendingTxn.hash,
       });
-
+  
       if (response?.success) {
         addTask &&
           addTask({
@@ -130,24 +136,24 @@ export function AddNewTaskModel({ children }: { children: React.ReactNode }) {
             title: data.title,
             status: 'backlog',
           });
-
+  
         reset(DEFAULT_VALUES);
         setOpen(false);
         toast({
-          title: 'Success',
+          title: 'Task created successfully!',
           description: (
             <a target='_blank' href={getTxUrl(pendingTxn.hash, network?.name)}>
-              View on AptosScan
+              View transaction on AptosScan
             </a>
           ),
         });
       } else {
-        handleError(`Transaction failed: ${response.vm_status}`);
+        handleError(`Transaction failed: ${response.vm_status}. Please review the transaction details and try again.`);
       }
     } catch (error: any) {
-      handleError(`Transaction error: ${error.message}`);
+      handleError(`An error occurred during the transaction: ${error.message}. Please try again or contact support.`);
     }
-  };
+  };  
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

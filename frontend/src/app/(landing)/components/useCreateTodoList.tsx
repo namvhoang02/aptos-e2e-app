@@ -7,18 +7,27 @@ import {
 import { useWallet } from '@aptos-labs/wallet-adapter-react';
 import { useState } from 'react';
 
-import { getAptosClient } from '@/lib/aptosClient';
 import { MODULE_ADDRESS } from '@/lib/constants';
+
+import { useClient } from '@/providers/ClientProvider';
 
 export const useCreateTodoList = (
   updateHasTodoList?: (hasTodoList: boolean) => void,
 ) => {
   const { account, signAndSubmitTransaction } = useWallet();
-  const client = getAptosClient();
+  const { client } = useClient();
   const [loading, setLoading] = useState(false);
 
   const createList = async () => {
-    if (!account) return;
+    if (!client) {
+      console.error('Client not initialized. Please ensure the client is correctly configured.');
+      return;
+    }
+  
+    if (!account?.address) {
+      console.error('No account address found. Please connect your wallet and try again.');
+      return;
+    }
 
     setLoading(true);
     try {

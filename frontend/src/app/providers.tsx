@@ -2,8 +2,13 @@
 
 import React from 'react';
 
+import { AptosClientProvider } from '@/providers/ClientProvider';
 import { WalletProvider } from '@/providers/WalletProvider';
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  return <WalletProvider>{children}</WalletProvider>;
+  return (
+    <WalletProvider>
+      <AptosClientProvider>{children}</AptosClientProvider>
+    </WalletProvider>
+  );
 }

@@ -1,0 +1,40 @@
+import type { PublicClient } from 'viem';
+
+import { bossStakingPoolAbi } from '../abi/bossStakingPoolAbi';
+import { getContractAddress } from '../utils';
+
+import type { SupportedChainId } from '~/lib/viem';
+
+// Interface for contracts to call for getting paused state (if available)
+export interface GetPausedContracts {
+  chainId: SupportedChainId;
+}
+
+// Function to construct the contract data for getting paused state (if available)
+export function getPausedContracts({ chainId }: GetPausedContracts) {
+  const address = getContractAddress(chainId);
+
+  return {
+    abi: bossStakingPoolAbi,
+    chainId,
+    address,
+    functionName: 'paused' as const, // Optional function for paused state
+  };
+}
+
+// Interface for the 'GetPaused' function inputs
+export interface GetPaused extends GetPausedContracts {
+  client: PublicClient;
+}
+
+// Function to attempt fetching paused state (might return undefined)
+export async function hasTodoList({ client, chainId }: GetPaused) {
+  const result = await client.multicall({
+    allowFailure: false,
+    contracts: getPausedContracts({ chainId }),
+  });
+
+  return result.map((r) => ({
+    paused: r.result, // Convert result (likely boolean) to paused state
+  }));
+}

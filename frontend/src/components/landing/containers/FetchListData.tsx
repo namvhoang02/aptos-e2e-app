@@ -3,9 +3,10 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react';
 import { useCallback, useEffect } from 'react';
 
-import { getAptosClient } from '@/lib/aptosClient';
 import { HTTP_STATUS } from '@/lib/constants';
 import { MODULE_ADDRESS } from '@/lib/constants';
+
+import { useClient } from '@/providers/ClientProvider';
 
 import { fetchListFailure } from '../context/actions';
 import { useLandingContext } from '../context/selectors';
@@ -28,11 +29,16 @@ const FetchListData = () => {
     updateHasTodoList,
   } = useLandingContext(); // Get state and dispatch function from context
   const { account } = useWallet();
-  const client = getAptosClient();
+  const { client } = useClient();
 
   const fetchData = useCallback(async () => {
+    if (!client) {
+      console.error('Client not initialized. Please ensure the client is correctly configured.');
+      return;
+    }
+  
     if (!account?.address) {
-      console.error('No account address available.');
+      console.error('No account address found. Please connect your wallet and try again.');
       return; // Return early if account address is undefined
     }
 
