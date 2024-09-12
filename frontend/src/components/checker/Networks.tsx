@@ -50,11 +50,7 @@ const Networks: FC<NetworksProps> = ({
   if (!allowedChainIds.has(network.name)) {
     return hoverCardContent ? (
       <HoverCard openDelay={0} closeDelay={0}>
-        <Button
-          size={size}
-          onClick={handleSwitchNetwork}
-          {...rest}
-        >
+        <Button size={size} onClick={handleSwitchNetwork} {...rest}>
           We do not support {chainName[network.name] ?? 'this network'}. Switch
           to {chainName[chainId]}{' '}
           <HoverCardTrigger>
@@ -66,11 +62,7 @@ const Networks: FC<NetworksProps> = ({
         </HoverCardContent>
       </HoverCard>
     ) : (
-      <Button
-        size={size}
-        onClick={handleSwitchNetwork}
-        {...rest}
-      >
+      <Button size={size} onClick={handleSwitchNetwork} {...rest}>
         We do not support {chainName[network.name] ?? 'this network'}. Switch to{' '}
         {chainName[chainId]}
       </Button>

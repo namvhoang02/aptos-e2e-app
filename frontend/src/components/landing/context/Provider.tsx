@@ -1,4 +1,3 @@
-// import { useChainId } from 'wagmi';
 import Debug from 'debug';
 import React, { useMemo, useReducer } from 'react';
 
@@ -6,7 +5,9 @@ import {
   addTask as addTaskAction,
   completeTask as completeTaskAction,
   deleteTask as deleteTaskAction,
+  fetchListRequest as fetchListRequestAction,
   fetchListSuccess as fetchListSuccessAction,
+  updateHasTodoList as updateHasTodoListAction,
 } from './actions';
 import LandingContext from './Context';
 import reducerDefault, { generateInitialState } from './reducer';
@@ -40,8 +41,16 @@ const LandingProvider: React.FC<LandingProviderProps> = ({
       dispatch(fetchListSuccessAction(data));
     };
 
+    const fetchListRequest = () => {
+      dispatch(fetchListRequestAction());
+    };
+
     const deleteTask = (data: Task) => {
       dispatch(deleteTaskAction(data));
+    };
+
+    const updateHasTodoList = (hasTodoList: boolean) => {
+      dispatch(updateHasTodoListAction(hasTodoList));
     };
 
     return {
@@ -50,7 +59,9 @@ const LandingProvider: React.FC<LandingProviderProps> = ({
       completeTask,
       addTask,
       fetchListSuccess,
+      fetchListRequest,
       deleteTask,
+      updateHasTodoList,
     };
   }, [state, dispatch]);
 

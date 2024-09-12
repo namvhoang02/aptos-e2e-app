@@ -49,12 +49,16 @@ interface DataTableProps<TData, TValue> {
   fetchStatus: string | null;
   data: TData[];
   columns: ColumnDef<TData, TValue>[];
+  hasTodoList: boolean;
+  updateHasTodoList?: (hasTodoList: boolean) => void
 }
 
 export function DataTable<TData, TValue>({
   fetchStatus,
   data,
   columns,
+  hasTodoList,
+  updateHasTodoList,
 }: DataTableProps<TData, TValue>) {
   const isMounted = useIsMounted();
   const { connected, isLoading } = useWallet();
@@ -138,6 +142,7 @@ export function DataTable<TData, TValue>({
       });
       if (response && response?.success) {
         console.log({ hash: pendingTxn?.hash, result: response });
+        updateHasTodoList && updateHasTodoList(true);
       } else {
         console.log({ message: response.vm_status || 'Transaction error!' });
       }
@@ -148,7 +153,7 @@ export function DataTable<TData, TValue>({
 
   const renderSkeletonRow = useMemo(
     () => (
-      <TableRow>
+      <TableRow key='skeleton-row-key'>
         {columns.map((column) => (
           <TableCell key={column.id} className='h-24 text-center'>
             {'accessorKey' in column && column.accessorKey === 'id' && (
@@ -219,7 +224,7 @@ export function DataTable<TData, TValue>({
             {isMounted &&
               connected &&
               !isFetching &&
-              (table.getRowModel().rows.length ? (
+              (hasTodoList ? (
                 table.getRowModel().rows.map((row) => (
                   <TableRow
                     key={row.id}

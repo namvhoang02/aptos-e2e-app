@@ -131,3 +131,21 @@ export const handleDeleteTask = (
     data: updatedTaskData,
   };
 };
+
+export const updateHasTodoList = (
+  state: InitialLandingState,
+  action: Action<boolean> | undefined,
+): InitialLandingState => {
+  if (!action || action.payload === undefined) {
+    return state;
+  }
+
+  const hasTodoList = action.payload;
+
+  return {
+    ...state,
+    fetchStatus: hasTodoList ? state.fetchStatus : HTTP_STATUS.LOADED,
+    errors: null,
+    hasTodoList,
+  };
+};

@@ -14,9 +14,9 @@ import {
   CommandList,
 } from '@/components/ui/command';
 import { Popover, PopoverContent } from '@/components/ui/popover';
+import { useToast } from '@/components/ui/use-toast';
 
 import { chainName, CHAINS } from '@/config';
-import { useToast } from '@/components/ui/use-toast';
 
 export function NetworkSelector({ children }: { children: React.ReactNode }) {
   const { toast } = useToast();

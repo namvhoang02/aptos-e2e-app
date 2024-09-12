@@ -23,5 +23,6 @@ export interface InitialLandingState extends FetchStatus {
   // Mutable value
   list: string[];
   data: Record<string, Task>;
+  hasTodoList: boolean;
   // Immutable value
 }

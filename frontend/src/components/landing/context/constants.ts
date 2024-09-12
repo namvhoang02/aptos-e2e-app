@@ -16,3 +16,5 @@ export const COMPLETE_TASK = createSymbol('UPDATE_TASK');
 export const ADD_TASK = createSymbol('ADD_TASK');
 
 export const DELETE_TASK = createSymbol('DELETE_TASK');
+
+export const UPDATE_HAS_TODO_LIST = createSymbol('UPDATE_HAS_TODO_LIST');

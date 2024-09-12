@@ -11,6 +11,7 @@ import {
   handleListFailure,
   handleListRequest,
   handleListSuccess,
+  updateHasTodoList,
 } from './tasks';
 import {
   ADD_TASK,
@@ -19,6 +20,7 @@ import {
   FETCH_LIST_FAILURE,
   FETCH_LIST_REQUEST,
   FETCH_LIST_SUCCESS,
+  UPDATE_HAS_TODO_LIST,
 } from '../constants';
 import { type InitialLandingState } from '../types';
 
@@ -32,6 +34,7 @@ export function generateInitialState(): InitialLandingState {
   return {
     fetchStatus: null,
     errors: null,
+    hasTodoList: false,
     list: [],
     data: {},
   };
@@ -45,9 +48,7 @@ export default createReducer<InitialLandingState>({
     [COMPLETE_TASK]: handleCompleteTask,
     [ADD_TASK]: handleAddTask,
     [DELETE_TASK]: handleDeleteTask,
-    // [FETCH_CREDIT_DATA_REQUEST]: handleCreditDataRequest,
-    // [FETCH_CREDIT_DATA_SUCCESS]: handleCreditDataSuccess,
-    // [FETCH_CREDIT_DATA_FAILURE]: handleCreditDataFailure,
+    [UPDATE_HAS_TODO_LIST]: updateHasTodoList,
     // [WITHDRAW_CREDITS_REQUEST]: handleWithdrawCreditsRequest,
     // [WITHDRAW_CREDITS_PREPARING]: handleWithdrawCreditsPreparing,
     // [WITHDRAW_CREDITS_PENDING]: handleWithdrawCreditsPending,

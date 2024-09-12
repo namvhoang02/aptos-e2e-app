@@ -7,7 +7,7 @@ import { getAptosClient } from '@/lib/aptosClient';
 import { HTTP_STATUS } from '@/lib/constants';
 import { MODULE_ADDRESS } from '@/lib/constants';
 
-import { fetchListFailure, fetchListRequest } from '../context/actions';
+import { fetchListFailure } from '../context/actions';
 import { useLandingContext } from '../context/selectors';
 import { type Task } from '../context/types';
 
@@ -20,7 +20,13 @@ function convertTask(task: any): Task {
 }
 
 const FetchListData = () => {
-  const { state, dispatch, fetchListSuccess } = useLandingContext(); // Get state and dispatch function from context
+  const {
+    state,
+    dispatch,
+    fetchListSuccess,
+    fetchListRequest,
+    updateHasTodoList,
+  } = useLandingContext(); // Get state and dispatch function from context
   const { account } = useWallet();
   const client = getAptosClient();
 
@@ -31,6 +37,18 @@ const FetchListData = () => {
     }
 
     try {
+      // https://aptos.dev/en/build/apis/fullnode-rest-api
+      const [hasTodoListRes] = await client.view<[boolean]>({
+        payload: {
+          function: `${MODULE_ADDRESS}::todolist::has_todo_list`,
+          typeArguments: [],
+          functionArguments: [account.address],
+        },
+      });
+
+      updateHasTodoList && updateHasTodoList(hasTodoListRes);
+      if (!hasTodoListRes) return;
+
       const todoListResource = await client.getAccountResource({
         accountAddress: account.address, // Now guaranteed to be defined
         resourceType: `${MODULE_ADDRESS}::todolist::TodoList`,
@@ -77,7 +95,7 @@ const FetchListData = () => {
 
   useEffect(() => {
     if (state.fetchStatus === null) {
-      dispatch(fetchListRequest());
+      fetchListRequest && fetchListRequest();
     }
   }, [state.fetchStatus]);
 
