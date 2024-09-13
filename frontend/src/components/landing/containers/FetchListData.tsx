@@ -5,6 +5,7 @@ import { useCallback, useEffect } from 'react';
 
 import { HTTP_STATUS } from '@/lib/constants';
 import { MODULE_ADDRESS } from '@/lib/constants';
+import { hasTodoList } from '@/lib/hooks/Todolist/functions/hasTodoList';
 
 import { useClient } from '@/providers/ClientProvider';
 
@@ -33,23 +34,24 @@ const FetchListData = () => {
 
   const fetchData = useCallback(async () => {
     if (!client) {
-      console.error('Client not initialized. Please ensure the client is correctly configured.');
+      console.error(
+        'Client not initialized. Please ensure the client is correctly configured.',
+      );
       return;
     }
-  
+
     if (!account?.address) {
-      console.error('No account address found. Please connect your wallet and try again.');
+      console.error(
+        'No account address found. Please connect your wallet and try again.',
+      );
       return; // Return early if account address is undefined
     }
 
     try {
       // https://aptos.dev/en/build/apis/fullnode-rest-api
-      const [hasTodoListRes] = await client.view<[boolean]>({
-        payload: {
-          function: `${MODULE_ADDRESS}::todolist::has_todo_list`,
-          typeArguments: [],
-          functionArguments: [account.address],
-        },
+      const hasTodoListRes = await hasTodoList({
+        client,
+        address: account.address,
       });
 
       updateHasTodoList && updateHasTodoList(hasTodoListRes);

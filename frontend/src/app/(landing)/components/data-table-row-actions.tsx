@@ -23,7 +23,7 @@ import {
 
 import { useClient } from '@/providers/ClientProvider';
 
-import { taskSchema } from '../data/schema';
+import { taskSchema } from '@/components/landing/context/types';
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -39,12 +39,16 @@ export function DataTableRowActions<TData>({
 
   const handleCompleteTask = async () => {
     if (!client) {
-      console.error('Client not initialized. Please ensure the client is correctly configured.');
+      console.error(
+        'Client not initialized. Please ensure the client is correctly configured.',
+      );
       return;
     }
-  
+
     if (!account?.address) {
-      console.error('No account address found. Please connect your wallet and try again.');
+      console.error(
+        'No account address found. Please connect your wallet and try again.',
+      );
       return;
     }
 
@@ -66,12 +70,16 @@ export function DataTableRowActions<TData>({
 
   const handleDeleteTask = async () => {
     if (!client) {
-      console.error('Client not initialized. Please ensure the client is correctly configured.');
+      console.error(
+        'Client not initialized. Please ensure the client is correctly configured.',
+      );
       return;
     }
-  
+
     if (!account?.address) {
-      console.error('No account address found. Please connect your wallet and try again.');
+      console.error(
+        'No account address found. Please connect your wallet and try again.',
+      );
       return;
     }
 

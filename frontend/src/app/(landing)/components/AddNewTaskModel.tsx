@@ -76,28 +76,32 @@ export function AddNewTaskModel({ children }: { children: React.ReactNode }) {
 
   const onSubmit: SubmitHandler<FormSchemaType> = async (data) => {
     if (!client) {
-      handleError('Client not initialized. Please ensure the client is correctly configured.');
+      handleError(
+        'Client not initialized. Please ensure the client is correctly configured.',
+      );
       return;
     }
-  
+
     if (!account?.address) {
-      handleError('No account address found. Please connect your wallet and try again.');
+      handleError(
+        'No account address found. Please connect your wallet and try again.',
+      );
       return;
     }
-  
+
     try {
       // Build transaction payload
       const payload: InputGenerateTransactionPayloadData = {
         function: `${MODULE_ADDRESS}::todolist::create_task`,
         functionArguments: [data.title],
       };
-  
+
       // Build raw transaction
       const rawTxn = await client.transaction.build.simple({
         sender: account.address,
         data: payload,
       });
-  
+
       // Simulate transaction to estimate gas
       const publicKey = new Ed25519PublicKey(account.publicKey.toString());
       const [simulationResult] = await client.transaction.simulate.simple({
@@ -109,12 +113,14 @@ export function AddNewTaskModel({ children }: { children: React.ReactNode }) {
           estimatePrioritizedGasUnitPrice: true,
         },
       });
-  
+
       if (!simulationResult) {
-        handleError('Transaction simulation failed. Please check your network or try again later.');
+        handleError(
+          'Transaction simulation failed. Please check your network or try again later.',
+        );
         return;
       }
-  
+
       // Prepare transaction with gas estimates
       const pendingTxn = await signAndSubmitTransaction({
         data: payload,
@@ -123,12 +129,12 @@ export function AddNewTaskModel({ children }: { children: React.ReactNode }) {
           gasUnitPrice: Number(simulationResult.gas_unit_price),
         },
       });
-  
+
       // Wait for transaction confirmation
       const response = await client.waitForTransaction({
         transactionHash: pendingTxn.hash,
       });
-  
+
       if (response?.success) {
         addTask &&
           addTask({
@@ -136,7 +142,7 @@ export function AddNewTaskModel({ children }: { children: React.ReactNode }) {
             title: data.title,
             status: 'backlog',
           });
-  
+
         reset(DEFAULT_VALUES);
         setOpen(false);
         toast({
@@ -148,12 +154,16 @@ export function AddNewTaskModel({ children }: { children: React.ReactNode }) {
           ),
         });
       } else {
-        handleError(`Transaction failed: ${response.vm_status}. Please review the transaction details and try again.`);
+        handleError(
+          `Transaction failed: ${response.vm_status}. Please review the transaction details and try again.`,
+        );
       }
     } catch (error: any) {
-      handleError(`An error occurred during the transaction: ${error.message}. Please try again or contact support.`);
+      handleError(
+        `An error occurred during the transaction: ${error.message}. Please try again or contact support.`,
+      );
     }
-  };  
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

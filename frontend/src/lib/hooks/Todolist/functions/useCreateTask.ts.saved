@@ -1,0 +1,73 @@
+import { type Address } from 'viem';
+import { type UseWriteContractParameters, useWriteContract } from 'wagmi';
+import { type SupportedChainId, getContractAddress } from '~/lib/viem';
+import { BOSS_REFERRAL_NETWORK_ADDRESS } from '../constants';
+
+// ABI for the withdrawCredits function
+export const abi = [
+  {
+    inputs: [
+      {
+        internalType: 'address[]',
+        name: 'tokens',
+        type: 'address[]',
+      },
+    ],
+    name: 'withdrawCredits',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+];
+
+// Type for contracts to call for withdrawing credits
+export type UseWithdrawCreditsContracts = {
+  chainId: SupportedChainId;
+};
+
+// Function to construct the contract data for withdrawing credits
+export function useWithdrawCreditsContracts({ chainId }: UseWithdrawCreditsContracts) {
+  const address = getContractAddress(chainId, BOSS_REFERRAL_NETWORK_ADDRESS);
+
+  return {
+    chainId,
+    abi, // Use the withdrawCredits ABI
+    address, // Target the specific contract's address
+    functionName: 'withdrawCredits', // Call the withdrawCredits function
+  };
+}
+
+export type UseWithdrawCredits = UseWithdrawCreditsContracts & UseWriteContractParameters & {};
+
+export const useCreateTask = ({ chainId, ...othersParams }: UseWithdrawCredits) => {
+  const { writeContract, ...other } = useWriteContract(othersParams);
+
+  const params = useWithdrawCreditsContracts({
+    chainId,
+  });
+
+  return {
+    writeWithdrawCredits: (tokens: Address[]) =>
+      writeContract({
+        ...params,
+        args: [tokens], // Pass tokens as argument
+      }),
+    ...other,
+  };
+};
+
+
+// how to use 
+
+// const {
+//   writeContract,
+//   isLoading: isWritePending,
+//   data: hash,
+//   error,
+//   status: isWriteStatus,
+// } = useWriteContract({
+//   mutation: {
+//     onSuccess,
+//     onError,
+//   },
+// });

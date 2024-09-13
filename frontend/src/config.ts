@@ -19,8 +19,6 @@ export const ENABLED_CHAINS = [
   Network.CUSTOM,
 ] as const;
 
-export const PREFERRED_CHAIN = Network.DEVNET;
-
 export const chainName = {
   [Network.DEVNET]: 'Aptos - Devnet',
   [Network.TESTNET]: 'Aptos - Testnet',

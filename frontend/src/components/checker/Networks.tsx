@@ -12,7 +12,8 @@ import {
   HoverCardTrigger,
 } from '@/components/ui/hover-card';
 
-import { chainName, ENABLED_CHAINS, PREFERRED_CHAIN } from '@/config';
+import { chainName, ENABLED_CHAINS } from '@/config';
+import { PREFERRED_CHAIN } from '@/lib/constants';
 
 interface NetworksProps extends ButtonProps {
   chainIds?: Network[]; // Default to ENABLED_CHAINS if not provided

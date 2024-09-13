@@ -20,12 +20,16 @@ export const useCreateTodoList = (
 
   const createList = async () => {
     if (!client) {
-      console.error('Client not initialized. Please ensure the client is correctly configured.');
+      console.error(
+        'Client not initialized. Please ensure the client is correctly configured.',
+      );
       return;
     }
-  
+
     if (!account?.address) {
-      console.error('No account address found. Please connect your wallet and try again.');
+      console.error(
+        'No account address found. Please connect your wallet and try again.',
+      );
       return;
     }
 
