@@ -12,6 +12,7 @@ import { Ellipsis } from 'lucide-react';
 import { MODULE_ADDRESS } from '@/lib/constants';
 
 import { useLandingContext } from '@/components/landing/context/selectors';
+import { taskSchema } from '@/components/landing/context/types';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -22,8 +23,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 import { useClient } from '@/providers/ClientProvider';
-
-import { taskSchema } from '@/components/landing/context/types';
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;

@@ -2,10 +2,11 @@
 
 import { ColumnDef } from '@tanstack/react-table';
 
+import { type Task } from '@/components/landing/context/types';
+
 import { DataTableColumnHeader } from './data-table-column-header';
 import { DataTableRowActions } from './data-table-row-actions';
 import { statuses } from '../data/data';
-import { Task } from '../data/schema';
 
 export const columns: ColumnDef<Task>[] = [
   {

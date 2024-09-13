@@ -1,17 +1,13 @@
 'use client';
 
-import {
-  Ed25519PublicKey,
-  InputGenerateTransactionPayloadData,
-} from '@aptos-labs/ts-sdk';
 import { useWallet } from '@aptos-labs/wallet-adapter-react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import { getTxUrl } from '@/lib/chain';
-import { MODULE_ADDRESS } from '@/lib/constants';
+import { useCreateTask } from '@/lib/hooks/Todolist/functions/useCreateTask';
 
 import { useLandingContext } from '@/components/landing/context/selectors';
 import { Button } from '@/components/ui/button';
@@ -74,6 +70,48 @@ export function AddNewTaskModel({ children }: { children: React.ReactNode }) {
     });
   };
 
+  const onSuccess = useCallback(
+    (hash: any, title: string) => {
+      addTask &&
+        addTask({
+          id: `${state.list.length + 1}`,
+          title,
+          status: 'backlog',
+        });
+
+      reset(DEFAULT_VALUES);
+      setOpen(false);
+      toast({
+        title: 'Task created successfully!',
+        description: (
+          <a target='_blank' href={getTxUrl(hash, network?.name)}>
+            View transaction on AptosScan
+          </a>
+        ),
+      });
+    },
+    [state.list, addTask, reset, setOpen, toast],
+  );
+
+  // const onError = useCallback((e: Error) => {
+  const onError = useCallback((e: unknown) => {
+    handleError(e as string);
+  }, []);
+
+  const {
+    data: hash,
+    // isPending,
+    // error,
+    createTaskAsync,
+  } = useCreateTask({
+    onError,
+    onSuccess,
+  });
+
+  console.log(hash, 'hash');
+  // console.log(isPending, 'isPending');
+  // console.log(error, 'error');
+
   const onSubmit: SubmitHandler<FormSchemaType> = async (data) => {
     if (!client) {
       handleError(
@@ -89,80 +127,53 @@ export function AddNewTaskModel({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    try {
-      // Build transaction payload
-      const payload: InputGenerateTransactionPayloadData = {
-        function: `${MODULE_ADDRESS}::todolist::create_task`,
-        functionArguments: [data.title],
-      };
+    return createTaskAsync(data.title);
 
-      // Build raw transaction
-      const rawTxn = await client.transaction.build.simple({
-        sender: account.address,
-        data: payload,
-      });
+    // try {
+    //   // Simulate transaction to estimate gas
+    //   const publicKey = new Ed25519PublicKey(account.publicKey.toString());
+    //   const [simulationResult] = await client.transaction.simulate.simple({
+    //     signerPublicKey: publicKey,
+    //     transaction: rawTxn,
+    //     options: {
+    //       estimateGasUnitPrice: true,
+    //       estimateMaxGasAmount: true,
+    //       estimatePrioritizedGasUnitPrice: true,
+    //     },
+    //   });
 
-      // Simulate transaction to estimate gas
-      const publicKey = new Ed25519PublicKey(account.publicKey.toString());
-      const [simulationResult] = await client.transaction.simulate.simple({
-        signerPublicKey: publicKey,
-        transaction: rawTxn,
-        options: {
-          estimateGasUnitPrice: true,
-          estimateMaxGasAmount: true,
-          estimatePrioritizedGasUnitPrice: true,
-        },
-      });
+    //   if (!simulationResult) {
+    //     handleError(
+    //       'Transaction simulation failed. Please check your network or try again later.',
+    //     );
+    //     return;
+    //   }
 
-      if (!simulationResult) {
-        handleError(
-          'Transaction simulation failed. Please check your network or try again later.',
-        );
-        return;
-      }
+    //   // Prepare transaction with gas estimates
+    //   const pendingTxn = await signAndSubmitTransaction({
+    //     data: payload,
+    //     options: {
+    //       maxGasAmount: Math.ceil(Number(simulationResult.gas_used) * 1.2),
+    //       gasUnitPrice: Number(simulationResult.gas_unit_price),
+    //     },
+    //   });
 
-      // Prepare transaction with gas estimates
-      const pendingTxn = await signAndSubmitTransaction({
-        data: payload,
-        options: {
-          maxGasAmount: Math.ceil(Number(simulationResult.gas_used) * 1.2),
-          gasUnitPrice: Number(simulationResult.gas_unit_price),
-        },
-      });
+    //   // Wait for transaction confirmation
+    //   const response = await client.waitForTransaction({
+    //     transactionHash: pendingTxn.hash,
+    //   });
 
-      // Wait for transaction confirmation
-      const response = await client.waitForTransaction({
-        transactionHash: pendingTxn.hash,
-      });
-
-      if (response?.success) {
-        addTask &&
-          addTask({
-            id: `${state.list.length + 1}`,
-            title: data.title,
-            status: 'backlog',
-          });
-
-        reset(DEFAULT_VALUES);
-        setOpen(false);
-        toast({
-          title: 'Task created successfully!',
-          description: (
-            <a target='_blank' href={getTxUrl(pendingTxn.hash, network?.name)}>
-              View transaction on AptosScan
-            </a>
-          ),
-        });
-      } else {
-        handleError(
-          `Transaction failed: ${response.vm_status}. Please review the transaction details and try again.`,
-        );
-      }
-    } catch (error: any) {
-      handleError(
-        `An error occurred during the transaction: ${error.message}. Please try again or contact support.`,
-      );
-    }
+    //   if (response?.success) {
+    //   } else {
+    //     handleError(
+    //       `Transaction failed: ${response.vm_status}. Please review the transaction details and try again.`,
+    //     );
+    //   }
+    // } catch (error: any) {
+    //   handleError(
+    //     `An error occurred during the transaction: ${error.message}. Please try again or contact support.`,
+    //   );
+    // }
   };
 
   return (
