@@ -10,8 +10,8 @@
 
 import {
   Ed25519PublicKey,
-  MoveStructId,
   InputGenerateTransactionPayloadData,
+  MoveStructId,
 } from '@aptos-labs/ts-sdk';
 import { useWallet } from '@aptos-labs/wallet-adapter-react';
 // // Type for contracts to call for withdrawing credits
@@ -67,7 +67,7 @@ export const useCreateTask = <
           'Client not initialized. Please ensure the client is correctly configured.',
         );
       }
-  
+
       if (!account?.address) {
         throw new Error(
           'No account address found. Please connect your wallet and try again.',
@@ -107,7 +107,8 @@ export const useCreateTask = <
       const pendingTxn = await signAndSubmitTransaction({
         data: payload,
         options: {
-          maxGasAmount: Math.ceil(Number(simulationResult.gas_used) * 1.2),
+          maxGasAmount: Math.ceil(Number(simulationResult.gas_used) * 0.9),
+          // maxGasAmount: Math.ceil(Number(simulationResult.gas_used) * 1.2),
           gasUnitPrice: Number(simulationResult.gas_unit_price),
         },
       });

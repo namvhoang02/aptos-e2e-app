@@ -96,16 +96,16 @@ const FetchListData = () => {
   }, [account, dispatch]);
 
   useEffect(() => {
-    if (state.fetchStatus === HTTP_STATUS.LOADING) {
+    if (state.fetchStatus === HTTP_STATUS.LOADING && client) {
       fetchData(); // Fetch data when fetch status is loading
     }
-  }, [state.fetchStatus, fetchData]);
+  }, [state.fetchStatus, fetchData, client]);
 
   useEffect(() => {
-    if (state.fetchStatus === null) {
+    if (state.fetchStatus === null && client) {
       fetchListRequest && fetchListRequest();
     }
-  }, [state.fetchStatus]);
+  }, [state.fetchStatus, client]);
 
   return null; // This component doesn't render anything visible
 };

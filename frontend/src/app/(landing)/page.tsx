@@ -48,7 +48,7 @@ export default function Page() {
           </div>
           <div className='flex items-center space-x-2'>
             <NetworkSelector>
-              <PopoverTrigger>
+              <PopoverTrigger asChild>
                 {/* <NetworkButton testId='network-selector' /> */}
                 <NetworkButton />
               </PopoverTrigger>

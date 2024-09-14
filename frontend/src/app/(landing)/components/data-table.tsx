@@ -99,8 +99,11 @@ export function DataTable<TData, TValue>({
   // Renders skeleton row while data is being fetched or components are mounting
   const renderSkeletonRow = () => (
     <TableRow key='skeleton-row-key'>
-      {columns.map((column) => (
-        <TableCell key={column.id} className='text-center'>
+      {columns.map((column, index: number) => (
+        <TableCell
+          key={`skeleton-row-key-${index}`}
+          className='text-center'
+        >
           {'accessorKey' in column && column.accessorKey === 'id' && (
             <div className='min-h-[300px] text-center flex flex-col items-center justify-center'>
               <Skeleton className='h-4 w-[50px]' />

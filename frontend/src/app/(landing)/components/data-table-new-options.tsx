@@ -1,14 +1,12 @@
-'use client';
-
 import { Plus } from 'lucide-react';
-import React from 'react';
+import React, { memo } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { DialogTrigger } from '@/components/ui/dialog';
 
 import { AddNewTaskModel } from './AddNewTaskModel';
 
-export function DataTableNewOptions() {
+const DataTableNewOptions = memo(() => {
   return (
     <AddNewTaskModel>
       <DialogTrigger asChild>
@@ -19,4 +17,8 @@ export function DataTableNewOptions() {
       </DialogTrigger>
     </AddNewTaskModel>
   );
-}
+});
+
+DataTableNewOptions.displayName = 'DataTableNewOptions';
+
+export { DataTableNewOptions };

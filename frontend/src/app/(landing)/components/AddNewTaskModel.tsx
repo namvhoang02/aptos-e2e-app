@@ -2,7 +2,7 @@
 
 import { useWallet } from '@aptos-labs/wallet-adapter-react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import React, { useCallback, useState } from 'react';
+import React, { memo,useCallback, useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -41,11 +41,11 @@ const DEFAULT_VALUES = {
 
 type FormSchemaType = z.infer<typeof formSchema>;
 
-export function AddNewTaskModel({ children }: { children: React.ReactNode }) {
+const AddNewTaskModel = memo(({ children }: { children: React.ReactNode }) => {
   const { toast } = useToast();
   const { state, addTask } = useLandingContext();
   const [open, setOpen] = useState(false);
-  const { account, signAndSubmitTransaction, network } = useWallet();
+  const { account, network } = useWallet();
 
   const { client } = useClient();
 
@@ -90,27 +90,19 @@ export function AddNewTaskModel({ children }: { children: React.ReactNode }) {
         ),
       });
     },
-    [state.list, addTask, reset, setOpen, toast],
+    [state.list, addTask, reset, setOpen, toast, network?.name],
   );
 
-  // const onError = useCallback((e: Error) => {
   const onError = useCallback((e: unknown) => {
     handleError(e as string);
   }, []);
 
-  const {
-    data: hash,
-    // isPending,
-    // error,
-    createTaskAsync,
-  } = useCreateTask({
+  const { data: hash, createTaskAsync } = useCreateTask({
     onError,
     onSuccess,
   });
 
   console.log(hash, 'hash');
-  // console.log(isPending, 'isPending');
-  // console.log(error, 'error');
 
   const onSubmit: SubmitHandler<FormSchemaType> = async (data) => {
     if (!client) {
@@ -128,52 +120,6 @@ export function AddNewTaskModel({ children }: { children: React.ReactNode }) {
     }
 
     return createTaskAsync(data.title);
-
-    // try {
-    //   // Simulate transaction to estimate gas
-    //   const publicKey = new Ed25519PublicKey(account.publicKey.toString());
-    //   const [simulationResult] = await client.transaction.simulate.simple({
-    //     signerPublicKey: publicKey,
-    //     transaction: rawTxn,
-    //     options: {
-    //       estimateGasUnitPrice: true,
-    //       estimateMaxGasAmount: true,
-    //       estimatePrioritizedGasUnitPrice: true,
-    //     },
-    //   });
-
-    //   if (!simulationResult) {
-    //     handleError(
-    //       'Transaction simulation failed. Please check your network or try again later.',
-    //     );
-    //     return;
-    //   }
-
-    //   // Prepare transaction with gas estimates
-    //   const pendingTxn = await signAndSubmitTransaction({
-    //     data: payload,
-    //     options: {
-    //       maxGasAmount: Math.ceil(Number(simulationResult.gas_used) * 1.2),
-    //       gasUnitPrice: Number(simulationResult.gas_unit_price),
-    //     },
-    //   });
-
-    //   // Wait for transaction confirmation
-    //   const response = await client.waitForTransaction({
-    //     transactionHash: pendingTxn.hash,
-    //   });
-
-    //   if (response?.success) {
-    //   } else {
-    //     handleError(
-    //       `Transaction failed: ${response.vm_status}. Please review the transaction details and try again.`,
-    //     );
-    //   }
-    // } catch (error: any) {
-    //   handleError(
-    //     `An error occurred during the transaction: ${error.message}. Please try again or contact support.`,
-    //   );
-    // }
   };
 
   return (
@@ -222,4 +168,8 @@ export function AddNewTaskModel({ children }: { children: React.ReactNode }) {
       </DialogContent>
     </Dialog>
   );
-}
+});
+
+AddNewTaskModel.displayName = 'AddNewTaskModel';
+
+export { AddNewTaskModel };
