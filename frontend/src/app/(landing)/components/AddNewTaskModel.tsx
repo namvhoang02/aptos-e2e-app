@@ -2,7 +2,7 @@
 
 import { useWallet } from '@aptos-labs/wallet-adapter-react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import React, { memo,useCallback, useState } from 'react';
+import React, { memo, useCallback, useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 

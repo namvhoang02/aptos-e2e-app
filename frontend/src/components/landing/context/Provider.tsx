@@ -5,6 +5,7 @@ import {
   addTask as addTaskAction,
   completeTask as completeTaskAction,
   deleteTask as deleteTaskAction,
+  fetchListFailure as fetchListFailureAction,
   fetchListRequest as fetchListRequestAction,
   fetchListSuccess as fetchListSuccessAction,
   updateHasTodoList as updateHasTodoListAction,
@@ -45,6 +46,10 @@ const LandingProvider: React.FC<LandingProviderProps> = ({
       dispatch(fetchListRequestAction());
     };
 
+    const fetchListFailure = (error: any) => {
+      dispatch(fetchListFailureAction(error));
+    };
+
     const deleteTask = (data: Task) => {
       dispatch(deleteTaskAction(data));
     };
@@ -60,6 +65,7 @@ const LandingProvider: React.FC<LandingProviderProps> = ({
       addTask,
       fetchListSuccess,
       fetchListRequest,
+      fetchListFailure,
       deleteTask,
       updateHasTodoList,
     };

@@ -9,7 +9,6 @@ import { hasTodoList } from '@/lib/hooks/Todolist/functions/hasTodoList';
 
 import { useClient } from '@/providers/ClientProvider';
 
-import { fetchListFailure } from '../context/actions';
 import { useLandingContext } from '../context/selectors';
 import { type Task } from '../context/types';
 
@@ -24,12 +23,12 @@ function convertTask(task: any): Task {
 const FetchListData = () => {
   const {
     state,
-    dispatch,
     fetchListSuccess,
     fetchListRequest,
+    fetchListFailure,
     updateHasTodoList,
   } = useLandingContext(); // Get state and dispatch function from context
-  const { account } = useWallet();
+  const { account, network } = useWallet();
   const { client } = useClient();
 
   const fetchData = useCallback(async () => {
@@ -91,9 +90,9 @@ const FetchListData = () => {
       fetchListSuccess && fetchListSuccess(tasks);
     } catch (error) {
       console.log(error, 'error');
-      dispatch(fetchListFailure(error)); // Dispatch failure action with error
+      fetchListFailure && fetchListFailure(error); // Dispatch failure action with error
     }
-  }, [account, dispatch]);
+  }, [account, client, fetchListFailure, fetchListSuccess]);
 
   useEffect(() => {
     if (state.fetchStatus === HTTP_STATUS.LOADING && client) {
@@ -106,6 +105,20 @@ const FetchListData = () => {
       fetchListRequest && fetchListRequest();
     }
   }, [state.fetchStatus, client]);
+
+  // Case 1: change networks
+  useEffect(() => {
+    if (state.fetchStatus === HTTP_STATUS.LOADED && network) {
+      fetchListRequest && fetchListRequest();
+    }
+  }, [network]);
+
+  // Case 2: change accounts
+  useEffect(() => {
+    if (state.fetchStatus === HTTP_STATUS.LOADED && account) {
+      fetchListRequest && fetchListRequest();
+    }
+  }, [account]);
 
   return null; // This component doesn't render anything visible
 };

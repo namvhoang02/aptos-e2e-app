@@ -100,10 +100,7 @@ export function DataTable<TData, TValue>({
   const renderSkeletonRow = () => (
     <TableRow key='skeleton-row-key'>
       {columns.map((column, index: number) => (
-        <TableCell
-          key={`skeleton-row-key-${index}`}
-          className='text-center'
-        >
+        <TableCell key={`skeleton-row-key-${index}`} className='text-center'>
           {'accessorKey' in column && column.accessorKey === 'id' && (
             <div className='min-h-[300px] text-center flex flex-col items-center justify-center'>
               <Skeleton className='h-4 w-[50px]' />
