@@ -1,18 +1,18 @@
 'use client';
 
 import {
-  Ed25519PublicKey,
-  InputGenerateTransactionPayloadData,
+  type InputGenerateTransactionPayloadData,
+  type MoveStructId,
 } from '@aptos-labs/ts-sdk';
 import { useWallet } from '@aptos-labs/wallet-adapter-react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import React, { useState } from 'react';
+import React, { memo, useCallback, useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import { getAptosClient } from '@/lib/aptosClient';
 import { getTxUrl } from '@/lib/chain';
 import { MODULE_ADDRESS } from '@/lib/constants';
+import { useWriteContract } from '@/lib/hooks/contract/useWriteContract';
 
 import { useLandingContext } from '@/components/landing/context/selectors';
 import { Button } from '@/components/ui/button';
@@ -35,6 +35,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 
+import { useClient } from '@/providers/ClientProvider';
+
 import formSchema from './form-schema';
 
 // Default values for the form
@@ -42,15 +44,17 @@ const DEFAULT_VALUES = {
   title: '',
 };
 
+const functionName: MoveStructId = `${MODULE_ADDRESS}::todolist::create_task`;
+
 type FormSchemaType = z.infer<typeof formSchema>;
 
-export function AddNewTaskModel({ children }: { children: React.ReactNode }) {
+const AddNewTaskModal = memo(({ children }: { children: React.ReactNode }) => {
   const { toast } = useToast();
   const { state, addTask } = useLandingContext();
   const [open, setOpen] = useState(false);
-  const { account, signAndSubmitTransaction, network } = useWallet();
+  const { account, network } = useWallet();
 
-  const client = getAptosClient();
+  const { client } = useClient();
 
   const form = useForm<FormSchemaType>({
     resolver: zodResolver(formSchema),
@@ -73,79 +77,66 @@ export function AddNewTaskModel({ children }: { children: React.ReactNode }) {
     });
   };
 
+  const onSuccess = useCallback(
+    (hash: string, payload: InputGenerateTransactionPayloadData) => {
+      const {
+        functionArguments: [title],
+      } = payload;
+      addTask?.({
+        id: `${state.list.length + 1}`,
+        title: title as string,
+        status: 'backlog',
+      });
+
+      reset(DEFAULT_VALUES);
+      setOpen(false);
+      toast({
+        title: 'Task created successfully!',
+        description: (
+          <a target='_blank' href={getTxUrl(hash, network?.name)}>
+            View transaction on AptosScan
+          </a>
+        ),
+      });
+    },
+    [state.list.length, addTask, reset, setOpen, toast, network?.name],
+  );
+
+  const onError = useCallback((e: unknown) => {
+    const errorMessage =
+      e instanceof Error ? e.message : 'An unknown error occurred';
+    handleError(errorMessage);
+  }, []);
+
+  const { data: hash, createContractAsync } = useWriteContract({
+    onError,
+    onSuccess,
+  });
+
+  console.log(hash, 'hash');
+
   const onSubmit: SubmitHandler<FormSchemaType> = async (data) => {
+    if (!client) {
+      handleError(
+        'Client not initialized. Please ensure the client is correctly configured.',
+      );
+      return;
+    }
+
     if (!account?.address) {
-      handleError('No account address available.');
+      handleError(
+        'No account address found. Please connect your wallet and try again.',
+      );
       return;
     }
 
     try {
-      // Build transaction payload
-      const payload: InputGenerateTransactionPayloadData = {
-        function: `${MODULE_ADDRESS}::todolist::create_task`,
-        functionArguments: [data.title],
-      };
-
-      // Build raw transaction
-      const rawTxn = await client.transaction.build.simple({
-        sender: account.address,
-        data: payload,
+      await createContractAsync({
+        function: functionName,
+        functionArguments: [`${data.title}`],
       });
-
-      // Simulate transaction to estimate gas
-      const publicKey = new Ed25519PublicKey(account.publicKey.toString());
-      const [simulationResult] = await client.transaction.simulate.simple({
-        signerPublicKey: publicKey,
-        transaction: rawTxn,
-        options: {
-          estimateGasUnitPrice: true,
-          estimateMaxGasAmount: true,
-          estimatePrioritizedGasUnitPrice: true,
-        },
-      });
-
-      if (!simulationResult) {
-        handleError('Failed to simulate transaction.');
-        return;
-      }
-
-      // Prepare transaction with gas estimates
-      const pendingTxn = await signAndSubmitTransaction({
-        data: payload,
-        options: {
-          maxGasAmount: Math.ceil(Number(simulationResult.gas_used) * 1.2),
-          gasUnitPrice: Number(simulationResult.gas_unit_price),
-        },
-      });
-
-      // Wait for transaction confirmation
-      const response = await client.waitForTransaction({
-        transactionHash: pendingTxn.hash,
-      });
-
-      if (response?.success) {
-        addTask &&
-          addTask({
-            id: `${state.list.length + 1}`,
-            title: data.title,
-            status: 'backlog',
-          });
-
-        reset(DEFAULT_VALUES);
-        setOpen(false);
-        toast({
-          title: 'Success',
-          description: (
-            <a target='_blank' href={getTxUrl(pendingTxn.hash, network?.name)}>
-              View on AptosScan
-            </a>
-          ),
-        });
-      } else {
-        handleError(`Transaction failed: ${response.vm_status}`);
-      }
-    } catch (error: any) {
-      handleError(`Transaction error: ${error.message}`);
+    } catch (error) {
+      handleError('Failed to create task. Please try again.');
     }
   };
 
@@ -195,4 +186,8 @@ export function AddNewTaskModel({ children }: { children: React.ReactNode }) {
       </DialogContent>
     </Dialog>
   );
-}
+});
+
+AddNewTaskModal.displayName = 'AddNewTaskModal';
+
+export { AddNewTaskModal };

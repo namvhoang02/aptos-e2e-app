@@ -32,7 +32,7 @@ import { columns } from './components/columns';
 import { DataTable } from './components/data-table';
 
 export default function Page() {
-  const { state, updateHasTodoList } = useLandingContext(); // Get state and dispatch function from context
+  const { state } = useLandingContext(); // Get state and dispatch function from context
 
   const tasks = state.list.map((id: string) => state.data[id]);
 
@@ -48,7 +48,7 @@ export default function Page() {
           </div>
           <div className='flex items-center space-x-2'>
             <NetworkSelector>
-              <PopoverTrigger>
+              <PopoverTrigger asChild>
                 {/* <NetworkButton testId='network-selector' /> */}
                 <NetworkButton />
               </PopoverTrigger>
@@ -61,7 +61,6 @@ export default function Page() {
         <DataTable
           fetchStatus={state.fetchStatus}
           hasTodoList={state.hasTodoList}
-          updateHasTodoList={updateHasTodoList}
           data={tasks}
           columns={columns}
         />

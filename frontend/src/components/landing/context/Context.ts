@@ -11,6 +11,7 @@ const LandingContext = createContext<{
   addTask?: (data: Task) => void;
   fetchListSuccess?: (data: Task[]) => void;
   fetchListRequest?: () => void;
+  fetchListFailure?: (error: any) => void;
   deleteTask?: (data: Task) => void;
   updateHasTodoList?: (hasTodoList: boolean) => void;
 }>({

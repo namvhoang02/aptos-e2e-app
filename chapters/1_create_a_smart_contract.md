@@ -9,7 +9,7 @@ Now that you are all set up and at your terminal:
     That command creates a `sources/` directory and `Move.toml` file inside the `move` directory.
 3.  Your new `move` directory should now resemble:
 
-    ![move-directory](../docs/build-e2e-dapp-img-1.png)
+    ![move-directory](./images/build-e2e-dapp-img-1.png)
 
 ### What is a `Move.toml` file?
 

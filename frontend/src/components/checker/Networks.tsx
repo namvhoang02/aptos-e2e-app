@@ -5,6 +5,8 @@ import { useWallet } from '@aptos-labs/wallet-adapter-react';
 import { Info } from 'lucide-react';
 import { FC, ReactElement, ReactNode } from 'react';
 
+import { PREFERRED_CHAIN } from '@/lib/constants';
+
 import { Button, ButtonProps } from '@/components/ui/button';
 import {
   HoverCard,
@@ -12,7 +14,7 @@ import {
   HoverCardTrigger,
 } from '@/components/ui/hover-card';
 
-import { chainName, ENABLED_CHAINS, PREFERRED_CHAIN } from '@/config';
+import { chainName, ENABLED_CHAINS } from '@/config';
 
 interface NetworksProps extends ButtonProps {
   chainIds?: Network[]; // Default to ENABLED_CHAINS if not provided

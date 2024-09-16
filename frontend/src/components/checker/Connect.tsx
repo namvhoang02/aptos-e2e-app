@@ -4,14 +4,16 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react';
 import React, { type FC } from 'react';
 
-import { type ButtonProps } from '@/components/ui/button';
 import { DialogTrigger } from '@/components/ui/dialog';
 
-import { WalletAdapterButton } from '../wallet-adapter/WalletAdapterButton';
+import {
+  type WalletAdapterButtonProps,
+  WalletAdapterButton,
+} from '../wallet-adapter/WalletAdapterButton';
 import { WalletAdapterModelDialog } from '../wallet-adapter/WalletAdapterModelDialog';
 
 // Define the props to ensure children and fallback are properly typed
-export interface ConnectProps extends ButtonProps {
+export interface ConnectProps extends WalletAdapterButtonProps {
   fallback?: React.ReactNode;
 }
 

@@ -1,13 +1,14 @@
 'use client';
 
 import { useWallet } from '@aptos-labs/wallet-adapter-react';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 
-import { getAptosClient } from '@/lib/aptosClient';
-import { HTTP_STATUS } from '@/lib/constants';
-import { MODULE_ADDRESS } from '@/lib/constants';
+import { HTTP_STATUS, MODULE_ADDRESS } from '@/lib/constants';
+import { hasTodoList } from '@/lib/hooks/Todolist/functions/hasTodoList';
+import { useDidUpdateEffect } from '@/lib/hooks/useDidUpdateEffect';
 
-import { fetchListFailure } from '../context/actions';
+import { useClient } from '@/providers/ClientProvider';
+
 import { useLandingContext } from '../context/selectors';
 import { type Task } from '../context/types';
 
@@ -22,47 +23,47 @@ function convertTask(task: any): Task {
 const FetchListData = () => {
   const {
     state,
-    dispatch,
     fetchListSuccess,
     fetchListRequest,
+    fetchListFailure,
     updateHasTodoList,
-  } = useLandingContext(); // Get state and dispatch function from context
-  const { account } = useWallet();
-  const client = getAptosClient();
+  } = useLandingContext();
+  const { account, network } = useWallet();
+  const { client } = useClient();
 
+  const accountAddress = useMemo(() => account?.address, [account]);
+  const networkName = useMemo(() => network?.name, [network]);
+
+  // Fetch data logic encapsulated within a useCallback hook to prevent unnecessary re-renders
   const fetchData = useCallback(async () => {
-    if (!account?.address) {
-      console.error('No account address available.');
-      return; // Return early if account address is undefined
+    if (!client || !account?.address) {
+      console.error(
+        'Client or account not initialized. Please check wallet connection.',
+      );
+      return;
     }
 
     try {
-      // https://aptos.dev/en/build/apis/fullnode-rest-api
-      const [hasTodoListRes] = await client.view<[boolean]>({
-        payload: {
-          function: `${MODULE_ADDRESS}::todolist::has_todo_list`,
-          typeArguments: [],
-          functionArguments: [account.address],
-        },
+      // Check if the user has a TodoList
+      const hasTodoListRes = await hasTodoList({
+        client,
+        address: account.address,
       });
+      updateHasTodoList?.(hasTodoListRes);
 
-      updateHasTodoList && updateHasTodoList(hasTodoListRes);
-      if (!hasTodoListRes) return;
+      if (!hasTodoListRes) return; // No TodoList, exit early
 
+      // Fetch the TodoList resource from the blockchain
       const todoListResource = await client.getAccountResource({
-        accountAddress: account.address, // Now guaranteed to be defined
+        accountAddress: account.address,
         resourceType: `${MODULE_ADDRESS}::todolist::TodoList`,
       });
 
-      // tasks table handle
-      const tableHandle = (todoListResource as any).tasks.handle;
-
-      // tasks table counter
-      const taskCounter = (todoListResource as any).task_counter;
+      const tableHandle = todoListResource.tasks.handle;
+      const taskCounter = todoListResource.task_counter;
 
       const tasks: Task[] = [];
-      let counter = 1;
-      while (counter <= taskCounter) {
+      for (let counter = 1; counter <= taskCounter; counter++) {
         try {
           const tableItem = {
             key_type: 'u64',
@@ -75,31 +76,57 @@ const FetchListData = () => {
           });
           tasks.push(convertTask(task));
         } catch (error: any) {
-          console.error(error.message);
-        } finally {
-          counter += 1;
+          console.error(`Error fetching task ${counter}:`, error.message);
         }
       }
-      fetchListSuccess && fetchListSuccess(tasks);
+
+      fetchListSuccess?.(tasks); // Dispatch success with the fetched tasks
     } catch (error) {
-      console.log(error, 'error');
-      dispatch(fetchListFailure(error)); // Dispatch failure action with error
+      console.error('Failed to fetch TodoList:', error);
+      fetchListFailure?.(error); // Dispatch failure with error
     }
-  }, [account, dispatch]);
+  }, [
+    client,
+    account?.address,
+    updateHasTodoList,
+    fetchListSuccess,
+    fetchListFailure,
+  ]);
 
+  // Trigger fetch when the fetch status is 'LOADING'
   useEffect(() => {
-    if (state.fetchStatus === HTTP_STATUS.LOADING) {
-      fetchData(); // Fetch data when fetch status is loading
+    if (state.fetchStatus === HTTP_STATUS.LOADING && client) {
+      fetchData();
     }
-  }, [state.fetchStatus, fetchData]);
+  }, [state.fetchStatus, client, fetchData]);
 
+  // Request fetch when fetch status is null (initial load)
   useEffect(() => {
-    if (state.fetchStatus === null) {
-      fetchListRequest && fetchListRequest();
+    if (state.fetchStatus === null && client) {
+      fetchListRequest?.();
     }
-  }, [state.fetchStatus]);
+  }, [state.fetchStatus, client, fetchListRequest]);
 
-  return null; // This component doesn't render anything visible
+  // Handle both network and account changes
+  const refetchWhenNetworkChange = useCallback(() => {
+    if (networkName && state.fetchStatus === HTTP_STATUS.LOADED) {
+      fetchListRequest?.();
+    }
+  }, [state.fetchStatus, networkName, fetchListRequest]);
+  useDidUpdateEffect(() => {
+    refetchWhenNetworkChange();
+  }, [networkName]);
+
+  const refetchWhenAccountChange = useCallback(() => {
+    if (accountAddress && state.fetchStatus === HTTP_STATUS.LOADED) {
+      fetchListRequest?.();
+    }
+  }, [state.fetchStatus, accountAddress, fetchListRequest]);
+  useDidUpdateEffect(() => {
+    refetchWhenAccountChange();
+  }, [accountAddress]);
+
+  return null; // This component doesn't render any UI elements
 };
 
 export default FetchListData;

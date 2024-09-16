@@ -6,25 +6,23 @@ import { Network } from '@aptos-labs/ts-sdk';
 // export const APTOS_COIN_ID = 637;
 export const CHAINS = [
   Network.MAINNET,
-  Network.DEVNET,
   Network.TESTNET,
+  Network.DEVNET,
   Network.LOCAL,
   Network.CUSTOM,
 ] as const;
 
 export const ENABLED_CHAINS = [
-  Network.DEVNET,
   Network.TESTNET,
+  Network.DEVNET,
   Network.LOCAL,
   Network.CUSTOM,
 ] as const;
 
-export const PREFERRED_CHAIN = Network.DEVNET;
-
 export const chainName = {
-  [Network.DEVNET]: 'Aptos - Devnet',
-  [Network.TESTNET]: 'Aptos - Testnet',
   [Network.MAINNET]: 'Aptos - Mainnet',
+  [Network.TESTNET]: 'Aptos - Testnet',
+  [Network.DEVNET]: 'Aptos - Devnet',
   [Network.LOCAL]: 'Aptos - Local',
   [Network.CUSTOM]: 'Aptos - Custom',
 };

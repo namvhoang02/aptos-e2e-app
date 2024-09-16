@@ -1,3 +1,5 @@
+import { Network } from '@aptos-labs/ts-sdk';
+
 export const SITENAME = 'Aptos E2E Dapp';
 export const SITELINK = 'https://aptos-e2e-dapp.vercel.app';
 
@@ -44,5 +46,7 @@ export const TRANSACTION_CONFIRMED = [
 
 export const MODULE_ADDRESS =
   '0x7654fd0be5bfa9e6eb080229eab8cbb746022fe3ba5cb302fef2d8985d666966';
+
+export const PREFERRED_CHAIN = Network.TESTNET;
 
 export const RECOMMENDED_WALLETS = ['Petra'];

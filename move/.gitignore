@@ -55,3 +55,5 @@ target-out-docker
 
 # Doc generation output
 *.md.old
+
+.aptos

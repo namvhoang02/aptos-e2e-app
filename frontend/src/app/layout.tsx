@@ -17,12 +17,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: PropsWithChildren) {
   return (
-    <html lang='en' suppressHydrationWarning>
+    <html lang='en'>
       <body
         className={cn(
           'min-h-screen bg-background font-sans antialiased',
           fontSans.variable,
         )}
+        suppressHydrationWarning={true}
       >
         <Providers>
           {children}
