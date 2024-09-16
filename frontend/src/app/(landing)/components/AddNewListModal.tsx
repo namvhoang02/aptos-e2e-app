@@ -8,6 +8,7 @@ import { getTxUrl } from '@/lib/chain';
 import { MODULE_ADDRESS } from '@/lib/constants';
 import { useWriteContract } from '@/lib/hooks/contract/useWriteContract';
 
+import { useLandingContext } from '@/components/landing/context/selectors';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -20,7 +21,6 @@ import {
 import { useToast } from '@/components/ui/use-toast';
 
 import { useClient } from '@/providers/ClientProvider';
-import { useLandingContext } from '@/components/landing/context/selectors';
 
 // Move function for creating a list
 const functionName: MoveStructId = `${MODULE_ADDRESS}::todolist::create_list`;
