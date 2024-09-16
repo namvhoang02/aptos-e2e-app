@@ -109,7 +109,7 @@ const FetchListData = () => {
 
   // Handle both network and account changes
   const refetchWhenNetworkChange = useCallback(() => {
-    if (networkName && state.fetchStatus === HTTP_STATUS.LOADED) {
+    if (networkName && (state.fetchStatus === HTTP_STATUS.LOADED || state.fetchStatus === HTTP_STATUS.FAILED)) {
       fetchListRequest?.();
     }
   }, [state.fetchStatus, networkName, fetchListRequest]);
@@ -118,7 +118,7 @@ const FetchListData = () => {
   }, [networkName]);
 
   const refetchWhenAccountChange = useCallback(() => {
-    if (accountAddress && state.fetchStatus === HTTP_STATUS.LOADED) {
+    if (accountAddress && (state.fetchStatus === HTTP_STATUS.LOADED || state.fetchStatus === HTTP_STATUS.FAILED)) {
       fetchListRequest?.();
     }
   }, [state.fetchStatus, accountAddress, fetchListRequest]);

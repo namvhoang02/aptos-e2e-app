@@ -33,11 +33,11 @@ export function NetworkSelector({ children }: { children: React.ReactNode }) {
         title: 'Success',
         description: `Switched to ${chainName[chainId]}`,
       });
-    } catch (error) {
-      console.error('Error switching network:', error);
+    } catch (error: any) {
+      console.trace('Error switching network:', error);
       toast({
         title: 'Error',
-        description: (error as Error).message || 'Failed to switch network',
+        description: error || 'Failed to switch network',
         variant: 'destructive',
       });
     }

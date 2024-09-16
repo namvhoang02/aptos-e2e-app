@@ -9,6 +9,9 @@ export const handleListRequest = (
   ...state,
   fetchStatus: HTTP_STATUS.LOADING,
   errors: null,
+  hasTodoList: false,
+  list: [],
+  data: {},
 });
 
 export const handleListSuccess = (

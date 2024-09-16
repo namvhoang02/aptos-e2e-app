@@ -26,6 +26,9 @@ describe('components/landing/context/reducer/tasks', () => {
     it('should set fetchStatus to LOADING and clear errors', () => {
       const newState = handleListRequest(initialState);
       expect(newState.fetchStatus).toBe(HTTP_STATUS.LOADING);
+      expect(newState.hasTodoList).toBe(false);
+      expect(newState.list).toEqual([]);
+      expect(newState.data).toEqual({});
       expect(newState.errors).toBeNull();
     });
   });
