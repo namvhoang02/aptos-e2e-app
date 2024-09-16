@@ -37,17 +37,16 @@ import {
 import { WalletAdapterButton } from '@/components/wallet-adapter/WalletAdapterButton';
 import { WalletAdapterModelDialog } from '@/components/wallet-adapter/WalletAdapterModelDialog';
 
-import { AddNewTaskModel } from './AddNewTaskModel';
+import { AddNewListModal } from './AddNewListModal';
+import { AddNewTaskModal } from './AddNewTaskModal';
 import { DataTablePagination } from './data-table-pagination';
 import { DataTableToolbar } from './data-table-toolbar';
-import { useCreateTodoList } from './useCreateTodoList';
 
 interface DataTableProps<TData, TValue> {
   fetchStatus: string | null;
   data: TData[];
   columns: ColumnDef<TData, TValue>[];
   hasTodoList: boolean;
-  updateHasTodoList?: (hasTodoList: boolean) => void;
 }
 
 export function DataTable<TData, TValue>({
@@ -55,7 +54,6 @@ export function DataTable<TData, TValue>({
   data,
   columns,
   hasTodoList,
-  updateHasTodoList,
 }: DataTableProps<TData, TValue>) {
   const isMounted = useIsMounted();
   const { connected, isLoading } = useWallet();
@@ -93,8 +91,6 @@ export function DataTable<TData, TValue>({
     () => fetchStatus === HTTP_STATUS.LOADING,
     [fetchStatus],
   );
-
-  const { createList, loading } = useCreateTodoList(updateHasTodoList);
 
   // Renders skeleton row while data is being fetched or components are mounting
   const renderSkeletonRow = () => (
@@ -147,13 +143,13 @@ export function DataTable<TData, TValue>({
             It looks like there's nothing here yet.
           </p>
 
-          <AddNewTaskModel>
+          <AddNewTaskModal>
             <DialogTrigger asChild>
               <Button className='mt-2'>
                 <Plus className='mr-2 h-4 w-4' /> Create new task
               </Button>
             </DialogTrigger>
-          </AddNewTaskModel>
+          </AddNewTaskModal>
         </div>
       </TableCell>
     </TableRow>
@@ -169,9 +165,11 @@ export function DataTable<TData, TValue>({
             Create a new list to get started.
           </p>
           <NetworksChecker>
-            <Button onClick={createList} disabled={loading} className='mt-2'>
-              {loading ? 'Creating...' : 'Create your list'}
-            </Button>
+            <AddNewListModal>
+              <DialogTrigger asChild>
+                <Button className='mt-2'>Create your list</Button>
+              </DialogTrigger>
+            </AddNewListModal>
           </NetworksChecker>
         </div>
       </TableCell>

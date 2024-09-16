@@ -1,10 +1,11 @@
 'use client';
 
 import { useWallet } from '@aptos-labs/wallet-adapter-react';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 
 import { HTTP_STATUS, MODULE_ADDRESS } from '@/lib/constants';
 import { hasTodoList } from '@/lib/hooks/Todolist/functions/hasTodoList';
+import { useDidUpdateEffect } from '@/lib/hooks/useDidUpdateEffect';
 
 import { useClient } from '@/providers/ClientProvider';
 
@@ -29,6 +30,9 @@ const FetchListData = () => {
   } = useLandingContext();
   const { account, network } = useWallet();
   const { client } = useClient();
+
+  const accountAddress = useMemo(() => account?.address, [account]);
+  const networkName = useMemo(() => network?.name, [network]);
 
   // Fetch data logic encapsulated within a useCallback hook to prevent unnecessary re-renders
   const fetchData = useCallback(async () => {
@@ -104,11 +108,23 @@ const FetchListData = () => {
   }, [state.fetchStatus, client, fetchListRequest]);
 
   // Handle both network and account changes
-  useEffect(() => {
-    if (state.fetchStatus === HTTP_STATUS.LOADED && (account || network)) {
+  const refetchWhenNetworkChange = useCallback(() => {
+    if (networkName && state.fetchStatus === HTTP_STATUS.LOADED) {
       fetchListRequest?.();
     }
-  }, [account, network, state.fetchStatus, fetchListRequest]);
+  }, [state.fetchStatus, networkName, fetchListRequest]);
+  useDidUpdateEffect(() => {
+    refetchWhenNetworkChange();
+  }, [networkName]);
+
+  const refetchWhenAccountChange = useCallback(() => {
+    if (accountAddress && state.fetchStatus === HTTP_STATUS.LOADED) {
+      fetchListRequest?.();
+    }
+  }, [state.fetchStatus, accountAddress, fetchListRequest]);
+  useDidUpdateEffect(() => {
+    refetchWhenAccountChange();
+  }, [accountAddress]);
 
   return null; // This component doesn't render any UI elements
 };

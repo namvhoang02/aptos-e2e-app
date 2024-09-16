@@ -3,7 +3,7 @@ import * as React from 'react';
 
 const debug = Debug('hooks:useDidUpdateEffect');
 
-export default function useDidUpdateEffect(fn: () => void, inputs: any) {
+export function useDidUpdateEffect(fn: () => void, inputs: any) {
   const didMountRef = React.useRef(false);
 
   React.useEffect(() => {

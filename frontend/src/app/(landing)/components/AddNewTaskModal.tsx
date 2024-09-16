@@ -1,5 +1,9 @@
 'use client';
 
+import {
+  type InputGenerateTransactionPayloadData,
+  type MoveStructId,
+} from '@aptos-labs/ts-sdk';
 import { useWallet } from '@aptos-labs/wallet-adapter-react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import React, { memo, useCallback, useState } from 'react';
@@ -7,7 +11,8 @@ import { type SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import { getTxUrl } from '@/lib/chain';
-import { useCreateTask } from '@/lib/hooks/Todolist/functions/useCreateTask';
+import { MODULE_ADDRESS } from '@/lib/constants';
+import { useWriteContract } from '@/lib/hooks/contract/useWriteContract';
 
 import { useLandingContext } from '@/components/landing/context/selectors';
 import { Button } from '@/components/ui/button';
@@ -39,9 +44,11 @@ const DEFAULT_VALUES = {
   title: '',
 };
 
+const functionName: MoveStructId = `${MODULE_ADDRESS}::todolist::create_task`;
+
 type FormSchemaType = z.infer<typeof formSchema>;
 
-const AddNewTaskModel = memo(({ children }: { children: React.ReactNode }) => {
+const AddNewTaskModal = memo(({ children }: { children: React.ReactNode }) => {
   const { toast } = useToast();
   const { state, addTask } = useLandingContext();
   const [open, setOpen] = useState(false);
@@ -71,13 +78,15 @@ const AddNewTaskModel = memo(({ children }: { children: React.ReactNode }) => {
   };
 
   const onSuccess = useCallback(
-    (hash: any, title: string) => {
-      addTask &&
-        addTask({
-          id: `${state.list.length + 1}`,
-          title,
-          status: 'backlog',
-        });
+    (hash: string, payload: InputGenerateTransactionPayloadData) => {
+      const {
+        functionArguments: [title],
+      } = payload;
+      addTask?.({
+        id: `${state.list.length + 1}`,
+        title: title as string,
+        status: 'backlog',
+      });
 
       reset(DEFAULT_VALUES);
       setOpen(false);
@@ -90,14 +99,16 @@ const AddNewTaskModel = memo(({ children }: { children: React.ReactNode }) => {
         ),
       });
     },
-    [state.list, addTask, reset, setOpen, toast, network?.name],
+    [state.list.length, addTask, reset, setOpen, toast, network?.name],
   );
 
   const onError = useCallback((e: unknown) => {
-    handleError(e as string);
+    const errorMessage =
+      e instanceof Error ? e.message : 'An unknown error occurred';
+    handleError(errorMessage);
   }, []);
 
-  const { data: hash, createTaskAsync } = useCreateTask({
+  const { data: hash, createContractAsync } = useWriteContract({
     onError,
     onSuccess,
   });
@@ -119,7 +130,14 @@ const AddNewTaskModel = memo(({ children }: { children: React.ReactNode }) => {
       return;
     }
 
-    return createTaskAsync(data.title);
+    try {
+      await createContractAsync({
+        function: functionName,
+        functionArguments: [`${data.title}`],
+      });
+    } catch (error) {
+      handleError('Failed to create task. Please try again.');
+    }
   };
 
   return (
@@ -170,6 +188,6 @@ const AddNewTaskModel = memo(({ children }: { children: React.ReactNode }) => {
   );
 });
 
-AddNewTaskModel.displayName = 'AddNewTaskModel';
+AddNewTaskModal.displayName = 'AddNewTaskModal';
 
-export { AddNewTaskModel };
+export { AddNewTaskModal };
